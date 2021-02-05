@@ -1,0 +1,21 @@
+#Home #Header, #Home #SectionB {
+    height: calc(100vh - 56px);
+    background-attachment:fixed;
+    background-repeat:no-repeat;
+    background-size:cover;
+    background-position-y:center;
+}
+#Home #Header h1 {
+    font-size: 3.7rem;
+    text-shadow: 0 0 17px black;
+    font-weight: bolder;
+    /*background-color: #00000030;*/
+}
+#Home #Header p {
+    font-size: 1.7rem;
+    text-shadow: 0 0 17px black; 
+}
+#Home #SectionA .overlay-bottom{
+    position: absolute;
+    bottom: 0;
+}
