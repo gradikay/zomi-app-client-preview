@@ -6,34 +6,42 @@ import { Auth } from "aws-amplify";
 // Components
 import LoaderButton from "../components/LoaderButton";
 // Libs
-import { useFields } from "../libs/hooksLib";
-// CSS
-import "../css/Register.css";
+import { useFields } from "../libs/hooksLib"; 
 // -------------- Application Begins Bellow ------------ //
 
+// Main Application
 export default function SignupConfirmation(props) {
+
+    // Important variables
     const [isLoading, setIsLoading] = useState(false);
     const [fields, handleFieldChange] = useFields({
         email: "",
-        password: "",
-        firstName: "",
-        lastName: "",
         company: "",
+        password: "",
+        lastName: "",
+        firstName: "",
         confirmPassword: "",
         confirmationCode: ""
     });
+
+    // Validating Confirmation form function
     function validateConfirmationForm() {
         return fields.confirmationCode.length > 0;
     }
+
+    // Handling submitted verification code : This is exectuted first
     async function handleConfirmationSubmitAfter(event) {
         event.preventDefault();
         //setMessage = ""
         setIsLoading(true);
 
         try {
+
             await Auth.confirmSignUp(fields.email, fields.confirmationCode);
 
-            props.history.push("/login/success");
+            // Redirect to login
+            props.history.push("/login");
+
         } catch (e) {
             alert(e.message);
             setIsLoading(false);

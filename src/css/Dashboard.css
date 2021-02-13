@@ -1,8 +1,16 @@
-.Dashboard h3 {
-    font-size: 17px;
+#Dashboard .card .overlay-bottom{
+    font-size:1.5rem;
 }
 
-.Dashboard p {
-    font-size: 13px;
-    color: #555 !important
+#Dashboard .card .overlay-bottom{
+    position: absolute;
+    bottom: 30%;
+}
+
+#Dashboard .card .card-img-overlay {
+    background-color: #00000014;
+}
+#Dashboard #SectionA a:hover {
+    box-shadow: 0 0 0px 6px #07284e;
+    display: block;
 }

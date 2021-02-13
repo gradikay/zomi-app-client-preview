@@ -15,16 +15,27 @@ import { AppContext } from "./libs/contextLib";
 
 
 export default function App() {
+
     // Check if the user is logged in (true) or logged out (false)
     const [isAuthenticated, userHasAuthenticated] = useState(false);
     // Waiting for the application to finish signing in the user
     const [isAuthenticating, setIsAuthenticating] = useState(true);
+    const [user, setUser] = useState(null);
 
     // useEffect for the current session and setting our isAuthenticated to true if signed in
     useEffect(() => {
+
         async function onLoad() {
+
             try {
+
+                // Getting current user session
                 await Auth.currentSession();
+                // Getting user information
+                let user = await Auth.currentAuthenticatedUser({ bypassCache: true });
+                let { attributes } = user;
+
+                setUser(attributes);
                 userHasAuthenticated(true);
             }
             catch (e) {
@@ -35,13 +46,24 @@ export default function App() {
 
             setIsAuthenticating(false);
         }
+
+        // Return onLoad function
         onLoad(); 
+
     }, []);      
 
+    // Important user variables
+    const userId = user && user["sub"];
+    const userEmail = user && user["email"];
+    const userFirstName = user && user["given_name"];
+    const userLastName = user && user["family_name"]; 
+
+    // Return UI
     return (
         !isAuthenticating && (  
-            
-            <AppContext.Provider value={{ isAuthenticated, userHasAuthenticated }}>
+
+            // Include Global variables for the entire app in AppContext value
+            <AppContext.Provider value={{ isAuthenticated, userHasAuthenticated, userId, userEmail, userFirstName, userLastName }}>
 
                 { /* Navigation - (Navigation.js) - Main navigation - Start */}                    
                 <Navigation/>

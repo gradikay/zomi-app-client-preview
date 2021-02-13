@@ -13,7 +13,7 @@ export default function LoaderButton({ isLoading, className = "", disabled = fal
             disabled={disabled || isLoading}
             {...props}
         >
-            {isLoading && <i className='fas fa-compass'></i>}
+            {isLoading && <i className='fa fa-spinner'></i>}
             {props.children}
         </button>
     );

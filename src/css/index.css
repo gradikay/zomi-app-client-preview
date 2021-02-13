@@ -21,3 +21,7 @@ input.form-control {
 input[type=file] {
     width: 100%;
 }
+
+img {
+    width: 100%;
+}

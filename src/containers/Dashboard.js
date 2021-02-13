@@ -1,190 +1,198 @@
-// This file is exported to --->  src/Routes.js
+// This file is exported to ---> src/Routes.js
 // React required
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 // Amplify required
-import { Auth } from "aws-amplify";
+import { API } from "aws-amplify";
+import { S3Image } from 'aws-amplify-react'; 
+import { useAppContext } from "../libs/contextLib";
+// CSS
+import "../css/Dashboard.css"
 // -------------- Application Begins Bellow ------------ //
 
+// Main Application
+export default function Dashboard() {
 
-export default function Dashboard() { 
-    //const { path } = useRouteMatch();
-    //const { userHasAuthenticated } = useAppContext();
-    const [isAuthenticating, setIsAuthenticating] = useState(true);
-    const [user, setUser] = useState({});
+    // Important variables 
+    const { isAuthenticated, userId, userEmail, userFirstName, signedupDate, userLastName} = useAppContext();
+    const [isLoading, setIsLoading] = useState(false);
+    const [posts, setPosts] = useState([]);
 
+    // Retreiving data from database
     useEffect(() => {
+
+        // Cleanup variable
         let unmounted = false;
+
         async function onLoad() {
+
+            setIsLoading(true);
+
+            // Loading products from Dynamodb
+            function loadPosts() {
+                // Note: "posts" is the [API] -> [endpoint] -> [name] in src -> index.js
+                return API.get("posts", "/posts");
+            } 
+
             try {
+
+                // Important variable
+                const posts = await loadPosts();
+
                 if (!unmounted) {
-                    // bypassCache set to "true" will update the page with update cognito data
-                    let user = await Auth.currentAuthenticatedUser({ bypassCache: true });
-                    let { attributes } = user;
-                    setUser(attributes);  
+                    // Saving retreived data into posts variable
+                    setPosts(posts);
                 }
 
-            }
-            catch (e) {
-                if (e !== 'No current user') {
-                    alert(e);
-                }
-            }
+                setIsLoading(false);
 
-            setIsAuthenticating(false);
+            } catch (e) {
+                alert(e);
+                setIsLoading(false);
+            }
 
         }
+
+        // Return onLoad function
         onLoad();
+
+        // Avoid data leaks by cleaning up useEffect : unmounted
         return () => {
             unmounted = true;
-        }
-    }, []); 
+            setPosts([]);
+        };
 
+    }, [isAuthenticated]);
+
+    // Return UI
     return (
-         // Make sure that the user has authenticated before returning
-        !isAuthenticating && (
-            <> 
-                <main className="Board bg-white p-3"> 
-                    { /* Board */}
-                    <Board user={user} /> 
-                </main>
-            </> 
-        )
+        <main id="Dashboard" className="border-bottom">
+
+            {/* Header - Start */}
+            <Header
+                userId={userId}
+                userEmail={userEmail}
+                userFirstName={userFirstName}
+                signedupDate={signedupDate}
+                userLastName={userLastName} 
+                posts={posts && posts}
+            /> 
+            {/* Header - End */}
+
+            {/* Posts - Start */}
+            <Posts posts={posts} isLoading={isLoading} /> 
+            {/* Posts - End */}
+
+        </main>
     );
 }
-const Board = ({ user }) => {
+
+// Header
+function Header(props) {
+
+    // Important variables 
+    const { userId, userEmail, userFirstName, userLastName, posts } = props
+
+    // Return UI
     return (
-        <>
-            <div className="row mx-auto justify-content-center ">
-                <div className="col-sm-8 bg-light border m-3 p-3">
-                    <h3>Alertes et Messages</h3>
-                    <p>{user['custom:firstName']}, trouverez ci-dessous la liste des alertes qui n&eacute;cessitent votre attention.</p>
+        <header className="container-fluid border-bottom py-3 bg-light">
+            <div className="row justify-content-center align-items-center">
+                <div className="col-sm-3 text-center">
+                    <h1>Dashboard </h1>
+                    <Link to="/postnew" className="btn btn-warning"> + NEW POST <i className="fa fa-share"></i></Link> 
                 </div>
-                <div className="col-sm-8 border p-3 m-3">
-                    <div className="media"> 
-                        <div className="media-body">
-                            <h3>Alertes</h3>
-                            <hr />
-                        { /* ALERTS */ }
-                        <Alerts user={user} />
-                        </div>
-                    </div>
+                <div className="col-sm-3">
+                    <ul className="list-group list-group-flush"> 
+                        <li className="list-group-item bg-light">User Id: {userId} </li>
+                        <li className="list-group-item bg-light">Post Count: { posts.length}</li>
+                    </ul>
                 </div>
-            </div> 
-        </>
-    );
-}
-const Alerts = ({ user }) => {
- 
-    return (
-        <>
-            <div
-                className={
-                    user["custom:address"] != null ?
-                        "d-block alert alert-success" :
-                        "d-block alert alert-danger"
-                }
-            >
-                {
-                    user["custom:address"] != null ?
-                        <h3><strong>Super! </strong> L'adresse de votre boutique est configur&eacute;.</h3> :
-                        <h3><strong>Danger! </strong>L'adresse de votre boutique n'a pas &eacute;t&eacute; configur&eacute;e.</h3>
-                }
-                <p>La configuration de votre address aide les clients &agrave; vous trouver lorsqu'ils recherchent des entreprises dans un endroit pr&eacute;cis. </p>
+                <div className="col-sm-3">
+                    <ul className="list-group list-group-flush"> 
+                        <li className="list-group-item bg-light">First Name: {userFirstName} </li> 
+                        <li className="list-group-item bg-light">Last Name: {userLastName}</li>
+                        <li className="list-group-item bg-light">Email: {userEmail}</li>
+                    </ul>
+                </div>
             </div>
-            <div
-                className={
-                    // if
-                    user["custom:province"] && user["custom:city"] === null ?
-                        "d-block alert alert-danger" :
-
-                    // else if
-                    user["custom:province"] && user["custom:city"] === "undefined" ?
-                            "d-block alert alert-danger" :
-
-                    // else
-                        "d-block alert alert-success"
-                }
-            >
-                {
-                    // if
-                    user["custom:province"] && user["custom:city"] === null ?
-                        <h3><strong>Danger! </strong>La province et la ville de votre magasin sont n&eacute;cessaires pour publier un produit, vous ne l'avez pas encore configur&eacute;.</h3> :
-
-                    // else if 
-                        user["custom:province"] && user["custom:city"] === "undefined" ?
-                            <h3><strong>Danger! </strong>La province et la ville de votre magasin sont n&eacute;cessaires pour publier un produit, vous ne l'avez pas encore configur&eacute;.</h3> :
-
-                    // else
-                            <h3><strong>Super! </strong>La province et la ville de votre magasin sont configur&eacute;</h3>
-                }
-                <p>La configuration de votre ville et de votre province aidera les clients &agrave; vous trouver lorsqu'ils recherchent des entreprises dans un endroit pr&eacute;cis. </p>
-            </div> 
-            <div
-                className={
-                    user["custom:storeManager"] != null ?
-                        "d-block alert alert-success" :
-                        "d-block alert alert-info"
-                }
-            >
-                {
-                    user["custom:storeManager"] != null ?
-                        <h3><strong>Super! </strong>Le nom de votre g&eacute;rant de magasin est configur&eacute;.</h3> :
-                        <h3><strong>Information! </strong>Indiquez le nom de votre g&eacute;rant de magasin.</h3>
-                }
-            </div>
-            <div
-                className={
-                    user["custom:storeDepartment"] != null ?
-                        "d-block alert alert-success" :
-                        "d-block alert alert-info"
-                }
-            >
-                {
-                    user["custom:storeDepartment"] != null ?
-                        <h3><strong>Super! </strong>Votre d&eacute;partement est configur&eacute;.</h3> :
-                        <h3><strong>Information! </strong>Quel est votre d&eacute;partement? vous ne l'avez pas encore configur&eacute;.</h3>
-                }
-            </div>
-            <div
-                className={
-                    user["custom:storeEmail"] != null ?
-                        "d-block alert alert-success" :
-                        "d-block alert alert-danger"
-                }
-            >
-                {
-                    user["custom:storeEmail"] != null ?
-                        <h3><strong>Super! </strong> Votre e-mail est configur&eacute;.</h3> :
-                        <h3><strong>Danger! </strong>Vous n'avez pas d&eacute;fini d'e-mail pour votre boutique.</h3>
-                }
-            </div>
-            <div
-                className={
-                    user["custom:storeWeb"] != null ?
-                        "d-block alert alert-success" :
-                        "d-block alert alert-info"
-                }
-            >
-                {
-                    user["custom:storeWeb"] != null ?
-                        <h3><strong>Information! </strong>Le site Web de votre magasin est configur&eacute;.</h3> :
-                        <h3><strong>Information! </strong>Le site Web de votre magasin est manquant.</h3>
-                }
-            </div>
-            <div
-                className={
-                    user["custom:storePhoneNumber"] != null ?
-                        "d-block alert alert-success" :
-                        "d-block alert alert-danger"
-                }
-            >
-                {
-                    user["custom:storePhoneNumber"] != null ?
-                        <h3><strong>Super! </strong> Votre num&eacute;ro de t&eacute;l&eacute;phone est configur&eacute;.</h3>:
-                        <h3><strong>Danger! </strong> Le num&eacute;ro de t&eacute;l&eacute;phone de votre magasin est manquant.</h3>
-                }
-                
-            </div>
-        </>
+        </header>
         );
 }
+
+// User Posts Function
+function Posts({ posts, isLoading }) {
+
+    // Return UI
+    return (
+        <div className="container row mx-auto py-5">
+            {!isLoading ?
+
+                // Display after we have loaded our data
+                posts.map((post, i) => {
+
+
+                    // Important variables
+                    const { image1 } = post.images;
+                    const { streetState, streetCity } = post.address;
+                    const { postId, userId, postStatus } = post;
+                    const convertDate = new Date(post.createdAt);
+                    const postedOn = convertDate.toDateString();
+                    const price = Number(post.postPrice).toLocaleString();
+
+
+                    // Return UI
+                    return (
+                        <div className="col-sm-6 col-md-4 text-white p-2" key={i++}>
+
+                            <div className="card shadow-sm">
+
+                                { /* Image - Start */}
+                                <S3Image level="protected" identityId={userId} imgKey={image1} />
+                                { /* Image - End */}
+                                 
+                                { /* Overlay - Start */}
+                                <div className="card-img-overlay">
+
+                                    { /* Top Overlay */}
+                                    <div className="overlay-top">
+                                        <span className="badge badge-primary rounded">
+                                            {postStatus} - {postedOn}
+                                        </span>
+                                    </div>
+
+                                    { /* Bottom Overlay */}
+                                    <div className="overlay-bottom">
+                                        <p className="m-0"><small>{streetCity}, {streetState}</small></p>
+                                        <p className="m-0"><b>${price}</b></p>
+                                    </div>
+
+                                </div> 
+                                { /* Overlay - End */} 
+
+                                { /* Body card - Start */} 
+                                <div className="card-body bg-white text-center">
+                                    <div className="btn-group" style={{ zIndex: "1" }}>  
+
+                                        <Link to={`/postedit/${postId}`} className="btn btn-danger">
+                                            <i className="fa fa-minus-square"></i> Edit
+                                        </Link>  
+
+                                        <Link to={`/view/${postId}`} className="btn btn-info">
+                                            <i className="fa fa-external-link-square"></i> View
+                                        </Link>  
+                                    </div>
+                                </div>
+                                { /* Body card - End */} 
+
+                            </div>
+
+                        </div>
+                    );
+                })
+                    :
+                // Display while Loading data
+                "Loading"
+            }           
+        </div>
+        );
+} 

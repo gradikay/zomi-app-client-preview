@@ -8,12 +8,13 @@ import { Auth } from "aws-amplify";
 // Libs
 import { useFields } from "../libs/hooksLib";
 // Getting - user status (user login - true or false) - from useAppContext
-import { useAppContext } from "../libs/contextLib";
-// CSS
-import "../css/Register.css";
+import { useAppContext } from "../libs/contextLib"; 
 // -------------- Application Begins Bellow ------------ //
 
+// Main Application
 export default function ResetPassword() {
+   
+    // Important Variables
     const [isLoading, setIsLoading] = useState(false);
     const [sentRequest, setSentRequest] = useState(null);
     const { userHasAuthenticated } = useAppContext();
@@ -26,93 +27,273 @@ export default function ResetPassword() {
         confirmPassword: "",
         confirmationCode: ""
     });
+
+    // Validating Email function
     function validateEmail() {
         return fields.email.length > 0;
     }
+
+    // Validating Confirmation form function
     function validateConfirmationForm() {
         return fields.password.length > 0 &&
             fields.password === fields.confirmPassword;
     }
 
+    // Handling submitted verification code : This is exectuted first
     async function handleSubmitSendResetCode(event) {
-        // Preventing the default html behavior of form submition
+
         event.preventDefault();
         setIsLoading(true);
 
         try {
-            // Storgin value in Cognito upon signing up
+
+            // Amplify's Auth.forgotPassword : Check AWS cognito for submitted email 
             const sentRequest = await Auth.forgotPassword(fields.email)
 
             setIsLoading(false);
             setSentRequest(sentRequest);
+
         } catch (e) {
+
             alert(e.message);
             setIsLoading(false);
+
         }
     }
 
+    // Handling submitted data : new password, email, and confirmation code
     async function handleSubmitResetPassword(event) {
-        // Preventing the default html behavior of form submition
+
         event.preventDefault();
         setIsLoading(true);
 
         try {
-            // Storgin value in Cognito upon signing up
+
+            // Getting user new password and email
             await Auth.forgotPasswordSubmit(fields.email, fields.confirmationCode, fields.password)
+            // Then Sign in the user
             await Auth.signIn(fields.email, fields.password);
-            // Setting up our user information with cognito and authenticating them
-            userHasAuthenticated(true);
-            // Send us to /boutique after successfully signing in
-            //window.location.reload();
+            
+            userHasAuthenticated(true); 
+
         } catch (e) {
+
             alert(e.message);
             setIsLoading(false);
+
         }
     }
 
-    function renderEmailField() {
-        return (
-            <main className="Signup container bg-white py-3 vh-100">
+    // Return UI
+    return (
+        <div className="Signup bg-white">
+            {
+                /* Checking if the user has submitted an email address */
+                sentRequest === null
+                    ?
+                    // Render Email Field
+                <RenderEmailField
+                    email={fields.email}
+                    isLoading={isLoading}
+                    validateEmail={validateEmail}
+                    handleFieldChange={handleFieldChange}
+                    handleSubmitSendResetCode={handleSubmitSendResetCode}
+                />
+                    :
+                    // Render Password Field
+                <RenderResetPasswordField
+                        password={fields.password}
+                        isLoading={isLoading}
+                        confirmPassword={fields.confimPassword}
+                        handleFieldChange={handleFieldChange}
+                        confirmationCode={fields.confirmationCode}
+                        validateConfirmationForm={validateConfirmationForm}
+                        handleSubmitResetPassword={handleSubmitResetPassword}
+                />
+            }
+        </div>
+    );
+}
+
+
+// First, We get the user email 
+function RenderEmailField(props) {
+
+    // Important variables
+    const {
+
+        email,
+        isLoading,
+        validateEmail,
+        handleFieldChange,
+        handleSubmitSendResetCode
+
+    } = props;
+
+
+    return (
+        <main className="Signup container-fluid bg-white py-3 vh-100 border-bottom">
+            <div className="row">
+
+                { /* Header - Start */}
+                <header className="col-sm-9 text-center border-bottom mb-3 mx-auto">
+                    <h1>Larissa</h1>
+                    <p>Please, Verify your email bellow!</p>
+                </header>
+                { /* Header - End */}
+
+                { /* Body - Start */}
+                <section className="col-sm-5 mx-auto">
+
+                    { /* Form - Start */}
+                    <form onSubmit={handleSubmitSendResetCode}>
+
+                        { /* Email - Start */}
+                        <div className="form-group">
+                            <label aria-label="email">E-mail</label>
+                            <input
+                                id="email"
+                                type="email"
+                                name="email"
+                                value={email}
+                                required="required"
+                                className="form-control"
+                                onChange={handleFieldChange}
+                                placeholder="Please enter your email"
+                            />
+                        </div>
+                        { /* Email - End */}
+
+                        { /* Submit Button - Start */}
+                        <LoaderButton
+                            block
+                            type="submit"
+                            isLoading={isLoading}
+                            disabled={!validateEmail()}
+                            className="btn-primary d-block my-3"
+                        >
+                            Send
+                            </LoaderButton>
+                        { /* Submit Button - End */}
+
+                    </form>
+                    { /* Form - End */}
+
+                    { /* Lower Section - Start */}
+                    <section className="p-2 border-top">
+                        <p className="border-bottom pb-3">
+                            <small>By using this application, you agree to Larissa's <a href="#">Terms of Service</a> and <a href="#">Privacy Notice</a>. </small>
+                        </p>
+
+                        <a href="/login"> Login </a>
+                        <span> | </span>
+                        <a href="/register"> Register instead! </a>
+                    </section>
+                    { /* Lower Section - End */}
+
+                </section>
+                { /* Body - End */}
+
+            </div>
+        </main>
+    );
+}
+
+
+// If the user exist, Let them reset the password
+function RenderResetPasswordField(props) {
+
+    // Important variables
+    const {
+
+        password,
+        isLoading,
+        confirmPassword,
+        confirmationCode,
+        handleFieldChange,
+        validateConfirmationForm,
+        handleSubmitResetPassword
+
+    } = props;
+
+
+    return (
+        <>
+            <main className="Signup container-fluid bg-white pt-3 pb-5 border-bottom">
                 <div className="row">
 
                     { /* Header - Start */}
-                    <header className="col-sm-12 text-center border-bottom mb-3">
-                        <h1>Larissa</h1>
-                        <p>Verify your email, Please! <span role="img" aria-label="hand down">&#128071;</span><span role="img" aria-label="dark skin">&#127998;</span> </p>
+                    <header className="col-sm-9 text-center border-bottom mb-3 mx-auto">
+                        <h1>Larissa</h1> 
+                        <p>Please, Check your email for a confirmation code!</p>
                     </header>
                     { /* Header - End */}
 
                     { /* Body - Start */}
-                    <section className="col-sm-4 mx-auto">
+                    <section className="col-sm-5 mx-auto">
 
                         { /* Form - Start */}
-                        <form onSubmit={handleSubmitSendResetCode}>
+                        <form onSubmit={handleSubmitResetPassword}>
 
-                            { /* Email - Start */}
+                            { /* Pass Code - Start */}
                             <div className="form-group">
-                                <label aria-label="email">E-mail</label>
+                                <label aria-label="confirmationCode">Confirmation Code</label>
                                 <input
-                                    value={fields.email}
-                                    onChange={handleFieldChange}
-                                    type="email"
-                                    className="form-control"
-                                    name="email"
-                                    id="email"
+                                    type="tel"
                                     required="required"
+                                    id="confirmationCode"
+                                    name="confirmationCode"
+                                    className="form-control"
+                                    value={confirmationCode}
+                                    placeholder="Code - 000000"
+                                    onChange={handleFieldChange}
                                 />
                             </div>
-                            { /* Email - End */}
+                            <span><small>Enter your confirmation code and reset your password!</small></span>
+                            { /* Pass Code - Start */}
+
+                            <hr />
+
+                            { /* Password - Start */}
+                            <div className="form-group">
+                                <label aria-label="password">Password</label>
+                                <input
+                                    id="password"
+                                    type="password"
+                                    name="password"
+                                    value={password}
+                                    required="required"
+                                    className="form-control"
+                                    onChange={handleFieldChange}
+                                />
+                            </div>
+                            { /* Password - End */}
+
+                            { /* Confirm Password - Start */}
+                            <div className="form-group">
+                                <label aria-label="confirmPassword">Confirm Password</label>
+                                <input
+                                    type="password"
+                                    required="required"
+                                    id="confirmPassword"
+                                    name="confirmPassword"
+                                    value={confirmPassword}
+                                    className="form-control"
+                                    onChange={handleFieldChange}
+                                />
+                            </div>
+                            { /* Confirm Password - End */}
 
                             { /* Submit Button - Start */}
                             <LoaderButton
                                 block
                                 type="submit"
-                                className="btn-primary d-block my-3"
                                 isLoading={isLoading}
-                                disabled={!validateEmail()}
+                                className="btn-primary d-block my-3"
+                                disabled={!validateConfirmationForm()}
                             >
-                                Send
-                            </LoaderButton>
+                                Update & Login
+                                </LoaderButton>
                             { /* Submit Button - End */}
 
                         </form>
@@ -123,105 +304,6 @@ export default function ResetPassword() {
 
                 </div>
             </main>
-        );
-    }
-    function renderResetPasswordField() {
-        return (
-            <>
-                <main className="Signup container bg-white pt-3 pb-5">
-                    <div className="row">
-
-                        { /* Header - Start */}
-                        <header className="col-sm-12 text-center border-bottom mb-3">
-                            <h1>Larissa</h1>
-                            <p>You are almost done! <span role="img" aria-label="hands">&#128079;</span><span role="img" aria-label="dark skin">&#127998;</span> </p>
-                            <p>Check your email for the confirmation code! <span role="img"
-                                aria-label="hand">&#128071;</span><span role="img" aria-label="dark skin">&#127998;</span> </p>
-                        </header>
-                        { /* Header - End */}
-
-                        { /* Body - Start */}
-                        <section className="col-sm-4 mx-auto">
-
-                            { /* Form - Start */}
-                            <form onSubmit={handleSubmitResetPassword}>
-
-                                { /* Pass Code - Start */}
-                                <div className="form-group">
-                                    <label aria-label="confirmationCode">Confirmation Code</label>
-                                    <input
-                                        value={fields.confirmationCode}
-                                        onChange={handleFieldChange}
-                                        type="tel"
-                                        className="form-control"
-                                        name="confirmationCode"
-                                        id="confirmationCode"
-                                        required="required"
-                                        placeholder="Code - 000000"
-                                    />
-                                </div>
-                                <span><small>Check your email for confirmation code.</small></span>
-                                { /* Pass Code - Start */}
-
-                                <hr />
-
-                                { /* Password - Start */}
-                                <div className="form-group">
-                                    <label aria-label="password">Password</label>
-                                    <input
-                                        value={fields.password}
-                                        onChange={handleFieldChange}
-                                        type="password"
-                                        className="form-control"
-                                        name="password"
-                                        id="password"
-                                        required="required"
-                                    />
-                                </div>
-                                { /* Password - End */}
-
-                                { /* Confirm Password - Start */}
-                                <div className="form-group">
-                                    <label aria-label="confirmPassword">Confirm Password</label>
-                                    <input
-                                        value={fields.confirmPassword}
-                                        onChange={handleFieldChange}
-                                        type="password"
-                                        className="form-control"
-                                        name="confirmPassword"
-                                        id="confirmPassword"
-                                        required="required"
-                                    />
-                                </div>
-                                { /* Confirm Password - End */}
-
-                                { /* Submit Button - Start */}
-                                <LoaderButton
-                                    block
-                                    type="submit"
-                                    className="btn-primary d-block my-3"
-                                    isLoading={isLoading}
-                                    disabled={!validateConfirmationForm()}
-                                >
-                                    Update
-                                </LoaderButton>
-                                { /* Submit Button - End */}
-
-                            </form>
-                            { /* Form - End */}
-
-                        </section>
-                        { /* Body - End */}
-
-                    </div>
-                </main>
-            </>
-        );
-    }
-
-    return (
-        <div className="Signup">
-            {sentRequest === null ? renderEmailField() : renderResetPasswordField()}
-        </div>
+        </>
     );
 }

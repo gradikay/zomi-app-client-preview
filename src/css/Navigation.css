@@ -1,0 +1,16 @@
+#Navigation .nav-link{
+    color:darkslategrey;
+    text-transform:uppercase;
+    font-size: .9em;
+    font-weight:bolder;
+}
+#Navigation .navbar-brand {
+    color:darkslategrey;
+    font-weight:bolder;
+    text-transform:uppercase;
+    font-size: 1.8em;
+}
+#Navigation .dropdown-menu{
+    box-sizing: content-box;
+    min-width: 12rem;
+}

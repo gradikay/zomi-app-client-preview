@@ -1,11 +1,7 @@
 // This file is exported to --->  src/App.js
 // React required
 import React from "react";
-import {Link} from "react-router-dom";
-// CSS
-import "../css/Footer.css";
 // -------------- Application Begins Bellow ------------ //
-
 
 export default function Footer() { 
     return ( 

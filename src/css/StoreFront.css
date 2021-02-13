@@ -1,9 +1,0 @@
-.StoreFront-Header header {
-    height: 192px;
-    background: linear-gradient(45deg, #3F51B5, #00BCD4);
-}
-    .StoreFront-Header header > section {
-        /* background-color: #000000ab !important; */
-        color: white;
-        text-shadow: -1px 3px 3px #00000052;
-    }

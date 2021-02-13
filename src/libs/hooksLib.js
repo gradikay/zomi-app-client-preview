@@ -1,10 +1,8 @@
-// **** THIS FILE IS EXPORTED TO ---> Register.js, Login.js, SignupConfirmation.js, ResetPassword.js ****
 // Amplify required
 import { useState } from "react";
 // -------------- Application Begins Bellow ------------ //
 
 // This is a Customer Hook
-// useFormFields is exported to Register.js, Login.js, SignupConfirmation.js, ResetPassword.js
 export function useFields(initialState) {
     const [fields, setValues] = useState(initialState);
 
@@ -18,9 +16,6 @@ export function useFields(initialState) {
         }
     ];
 }
-
-// -------------- Learn More Begins Bellow ------------ //
-// Learn more here ---> https://reactjs.org/docs/hooks-custom.html
 
 // Explaination 
 
