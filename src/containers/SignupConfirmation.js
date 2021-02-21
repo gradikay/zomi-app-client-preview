@@ -53,8 +53,8 @@ export default function SignupConfirmation(props) {
 
                 { /* Header - Start */}
                 <header className="col-sm-12 text-center border-bottom mb-3">
-                    <h1>Larissa</h1>
-                    <p>Thank you for joining Larissa! <span role="img" aria-label="thumbs up">&#128077;</span><span role="img" aria-label="dark skin">&#127998;</span> </p>
+                    <h1>Zomi</h1>
+                    <p>Thank you for joining Zomi! <span role="img" aria-label="thumbs up">&#128077;</span><span role="img" aria-label="dark skin">&#127998;</span> </p>
                 </header>
                 { /* Header - End */}
 

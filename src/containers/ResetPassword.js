@@ -137,7 +137,7 @@ function RenderEmailField(props) {
 
                 { /* Header - Start */}
                 <header className="col-sm-9 text-center border-bottom mb-3 mx-auto">
-                    <h1>Larissa</h1>
+                    <h1>Zomi</h1>
                     <p>Please, Verify your email bellow!</p>
                 </header>
                 { /* Header - End */}
@@ -182,7 +182,7 @@ function RenderEmailField(props) {
                     { /* Lower Section - Start */}
                     <section className="p-2 border-top">
                         <p className="border-bottom pb-3">
-                            <small>By using this application, you agree to Larissa's <a href="#">Terms of Service</a> and <a href="#">Privacy Notice</a>. </small>
+                            <small>By using this application, you agree to Zomi's <a href="#">Terms of Service</a> and <a href="#">Privacy Notice</a>. </small>
                         </p>
 
                         <a href="/login"> Login </a>
@@ -224,7 +224,7 @@ function RenderResetPasswordField(props) {
 
                     { /* Header - Start */}
                     <header className="col-sm-9 text-center border-bottom mb-3 mx-auto">
-                        <h1>Larissa</h1> 
+                        <h1>Zomi</h1> 
                         <p>Please, Check your email for a confirmation code!</p>
                     </header>
                     { /* Header - End */}

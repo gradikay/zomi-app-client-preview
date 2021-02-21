@@ -16,8 +16,6 @@ import ResetPassword from "./containers/ResetPassword";
 import SignupConfirmation from "./containers/SignupConfirmation";
 // Components
 import AppliedRoute from "./components/AppliedRoute";
-import AuthenticatedRoute from "./components/AuthenticatedRoute";
-import UnauthenticatedRoute from "./components/UnauthenticatedRoute"; 
 // -------------- Application Begins Bellow ------------ //
 
 
@@ -31,18 +29,18 @@ export default function Routes({ appProps }) {
             <AppliedRoute path="/view/:id" component={PostView} appProps={appProps} />      
             { /* AppliedRoute - Public & Private accessible links - End */ }
 
-            { /* UnauthenticatedRoute - Public (Not logged In User) only links - Start */ }
-            <UnauthenticatedRoute path="/login" component={Login} appProps={appProps} />
-            <UnauthenticatedRoute path="/register" component={Register} appProps={appProps} />
-            <UnauthenticatedRoute path="/reset" component={ResetPassword} appProps={appProps} />
-            <UnauthenticatedRoute path="/confirmation" component={SignupConfirmation} appProps={appProps} />
-            { /* UnauthenticatedRoute - Public (Not logged In User) only links - End */ }
+            { /* AppliedRoute - Public (Not logged In User) only links - Start */ }
+            <AppliedRoute path="/login" component={Login} appProps={appProps} />
+            <AppliedRoute path="/register" component={Register} appProps={appProps} />
+            <AppliedRoute path="/reset" component={ResetPassword} appProps={appProps} />
+            <AppliedRoute path="/confirmation" component={SignupConfirmation} appProps={appProps} />
+            { /* AppliedRoute - Public (Not logged In User) only links - End */ }
 
-            { /* AuthenticatedRoute - Private (logged In User) only links - Start */ } 
-            <AuthenticatedRoute path="/postnew" component={PostNew} appProps={appProps} />
-            <AuthenticatedRoute path="/dashboard" component={Dashboard} appProps={appProps} />
-            <AuthenticatedRoute path="/postedit/:id" component={PostEdit} appProps={appProps} /> 
-            { /* AuthenticatedRoute - Private (logged In User) only links - End */ }
+            { /* AppliedRoute - Private (logged In User) only links - Start */ } 
+            <AppliedRoute path="/postnew" component={PostNew} appProps={appProps} />
+            <AppliedRoute path="/dashboard" component={Dashboard} appProps={appProps} />
+            <AppliedRoute path="/postedit/:id" component={PostEdit} appProps={appProps} /> 
+            { /* AppliedRoute - Private (logged In User) only links - End */ }
 
             { /* 404 Page - Start */ }
             <Route component={NotFound} />

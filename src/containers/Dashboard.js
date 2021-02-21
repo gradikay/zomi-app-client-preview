@@ -1,20 +1,19 @@
 // This file is exported to ---> src/Routes.js
 // React required
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-// Amplify required
-import { API } from "aws-amplify";
-import { S3Image } from 'aws-amplify-react'; 
+import { Link } from "react-router-dom"; 
 import { useAppContext } from "../libs/contextLib";
 // CSS
-import "../css/Dashboard.css"
+import "../css/Dashboard.css";
+import { data as dummyPosts } from "../DummyData/data";
+
 // -------------- Application Begins Bellow ------------ //
 
 // Main Application
 export default function Dashboard() {
 
     // Important variables 
-    const { isAuthenticated, userId, userEmail, userFirstName, signedupDate, userLastName} = useAppContext();
+    const { isAuthenticated, userId, userEmail, userFirstName, userLastName} = useAppContext();
     const [isLoading, setIsLoading] = useState(false);
     const [posts, setPosts] = useState([]);
 
@@ -28,20 +27,9 @@ export default function Dashboard() {
 
             setIsLoading(true);
 
-            // Loading products from Dynamodb
-            function loadPosts() {
-                // Note: "posts" is the [API] -> [endpoint] -> [name] in src -> index.js
-                return API.get("posts", "/posts");
-            } 
-
             try {
-
-                // Important variable
-                const posts = await loadPosts();
-
-                if (!unmounted) {
-                    // Saving retreived data into posts variable
-                    setPosts(posts);
+                 
+                if (!unmounted) { 
                 }
 
                 setIsLoading(false);
@@ -58,8 +46,7 @@ export default function Dashboard() {
 
         // Avoid data leaks by cleaning up useEffect : unmounted
         return () => {
-            unmounted = true;
-            setPosts([]);
+            unmounted = true; 
         };
 
     }, [isAuthenticated]);
@@ -72,15 +59,14 @@ export default function Dashboard() {
             <Header
                 userId={userId}
                 userEmail={userEmail}
-                userFirstName={userFirstName}
-                signedupDate={signedupDate}
-                userLastName={userLastName} 
-                posts={posts && posts}
+                userFirstName={userFirstName} 
+                userLastName={userLastName}
+                posts={dummyPosts}
             /> 
             {/* Header - End */}
 
             {/* Posts - Start */}
-            <Posts posts={posts} isLoading={isLoading} /> 
+            <Posts posts={dummyPosts} isLoading={isLoading} /> 
             {/* Posts - End */}
 
         </main>
@@ -133,57 +119,35 @@ function Posts({ posts, isLoading }) {
 
                     // Important variables
                     const { image1 } = post.images;
-                    const { streetState, streetCity } = post.address;
-                    const { postId, userId, postStatus } = post;
-                    const convertDate = new Date(post.createdAt);
-                    const postedOn = convertDate.toDateString();
-                    const price = Number(post.postPrice).toLocaleString();
+                    const { postId, postTitle } = post;
 
 
                     // Return UI
                     return (
-                        <div className="col-sm-6 col-md-4 text-white p-2" key={i++}>
+                        <div className="col-md-6 col-lg-4 p-3" key={i++}> 
+                            <div className="card border-0">
 
-                            <div className="card shadow-sm">
+                                { /* Image */}
+                                <img src={image1} />
 
-                                { /* Image - Start */}
-                                <S3Image level="protected" identityId={userId} imgKey={image1} />
-                                { /* Image - End */}
-                                 
                                 { /* Overlay - Start */}
-                                <div className="card-img-overlay">
+                                <div className="card-body p-0">
 
-                                    { /* Top Overlay */}
-                                    <div className="overlay-top">
-                                        <span className="badge badge-primary rounded">
-                                            {postStatus} - {postedOn}
-                                        </span>
-                                    </div>
+                                    <p className="p-0 m-0" style={{ fontSize: "1.3rem" }}><b>{postTitle}</b></p>
 
-                                    { /* Bottom Overlay */}
-                                    <div className="overlay-bottom">
-                                        <p className="m-0"><small>{streetCity}, {streetState}</small></p>
-                                        <p className="m-0"><b>${price}</b></p>
-                                    </div>
-
-                                </div> 
-                                { /* Overlay - End */} 
-
-                                { /* Body card - Start */} 
-                                <div className="card-body bg-white text-center">
-                                    <div className="btn-group" style={{ zIndex: "1" }}>  
-
-                                        <Link to={`/postedit/${postId}`} className="btn btn-danger">
-                                            <i className="fa fa-minus-square"></i> Edit
-                                        </Link>  
-
-                                        <Link to={`/view/${postId}`} className="btn btn-info">
-                                            <i className="fa fa-external-link-square"></i> View
-                                        </Link>  
-                                    </div>
                                 </div>
-                                { /* Body card - End */} 
+                                { /* Overlay - End */}
 
+                            </div> 
+                            <div className="mt-3">
+                                <a href={`/view/${postId}`} className="btn btn-outline-dark mr-3">
+                                    <i className="fa fa-low-vision" role="img" aria-label="view"></i>
+                                    <span> View </span>
+                                </a>
+                                <a href={`/postedit/${postId}`} className="btn btn-outline-danger">
+                                    <i className="fa fa-edit" role="img" aria-label="edit"></i>
+                                    <span> Edit </span>
+                                </a> 
                             </div>
 
                         </div>

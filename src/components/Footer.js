@@ -5,7 +5,7 @@ import React from "react";
 
 export default function Footer() { 
     return ( 
-        <footer id="Footer" className="container-fluid bg-white pt-5 pb-2">
+        <footer id="Footer" className="container-fluid bg-white">
              <SectionA/> 
              <SectionB/> 
         </footer> 
@@ -13,56 +13,117 @@ export default function Footer() {
 }
 function SectionA() {
     return (
-        <section className="row">
-            <div className="col-sm-3">
-                <p>Popular Real Estate Markets</p>
-                <ul style={{ listStyle: "none" }}>
-                    <li>Houston, TX Real Estate</li>
-                    <li>Atlanta, GA Real Estate</li>
-                    <li>Macon, GA Real Estate</li>
-                    <li>Los Angeles,CA Real Estate</li>
-                    <li className="text-primary"><small>SEE MORE</small></li>
-                </ul>
-            </div>
-            <div className="col-sm-3">
-                <p>Popular Apartment Cities</p>
-                <ul style={{ listStyle: "none" }}>
-                    <li>Houston, TX Apartments</li>
-                    <li>Atlanta, GA Apartments</li>
-                    <li>Macon, GA Apartments</li>
-                    <li>Los Angeles, CA Apartments</li>
-                    <li className="text-primary"><small>SEE MORE</small></li>
-                </ul>
-            </div>
-            <div className="col-sm-3">
-                <p>Popular Resources</p>
-                <ul style={{ listStyle: "none" }}>
-                    <li>Free Landlord Software</li>
-                    <li>Homes for Sale</li>
-                    <li>Apartments and Houses for Rent</li>
-                    <li>Ntanku ya Koteka</li>
-                    <li className="text-primary"><small>SEE MORE</small></li> 
-                </ul>
-            </div>
-            <div className="col-sm-3">
-                <p>Listings By State</p>
-                <ul style={{ listStyle: "none" }}>
-                    <li>Alabama New Listings</li>
-                    <li>Alaska New Listings</li>
-                    <li>Georgia New Listings</li>
-                    <li>North Carolina New Listings</li>
-                    <li className="text-primary"><small>SEE MORE</small></li> 
-                </ul>
-            </div>
-        </section>
+        <div className="row py-5 bg-light border-bottom">
+            <section className="col">
+                <div className="border-bottom mb-3 pb-3">
+                    <p><b>Zomi</b></p>
+                    <p>Connecting decision makers to a dynamic network of information, people and ideas, quiclky and accurately delivers business and financial information, news and insight around the world</p>
+
+                </div>
+                <div className="border-bottom mb-3 pb-3">
+                    <p><b>For Customers</b></p>
+                    <p>Zomi Anywhere Remote Login</p>
+                    <p>Software Updates</p>
+                    <p>Manage Products and Account Information</p>
+
+                </div>
+                <div className="border-bottom mb-3 pb-3">
+                    <p><b>Support</b></p>
+                    <ul>
+                        <li>Americas +000 000 0000</li>
+                        <li>EMEA + 000 00 000 0000 </li>
+                        <li>Asia Pacific +00 0 00 0 00</li>
+                    </ul>
+                </div>
+            </section>
+            <section className="col">
+                <div className="mb-3 pb-3">
+                    <p className="border-bottom">COMPANY</p>
+                    <ul>
+                        <li>About</li>
+                        <li>Careers</li>
+                        <li>Diversity and Inclusion</li>
+                        <li>Innovation</li>
+                        <li>Philanthropy</li>
+                        <li>Sustainability</li>
+                    </ul>
+                </div>
+                <div className="mb-3 pb-3">
+                    <p className="border-bottom">Communications</p>
+                    <ul>
+                        <li>Press Announcements</li>
+                        <li>Press contacts</li>
+                    </ul>
+                </div>
+                <div className="mb-3 pb-3">
+                    <p className="border-bottom">Follow</p>
+                    <ul>
+                        <li>Facebook</li>
+                        <li>Twitter</li>
+                        <li>LinkedIn</li>
+                        <li>Instagram</li>
+                    </ul>
+                </div>
+
+            </section>
+            <section className="col">
+                <div className="mb-3 pb-3">
+                    <p className="border-bottom">Products</p>
+                    <ul>
+                        <li>Zomi Terminal</li>
+                        <li>Execution and Order Managment</li>
+                        <li>Content and Data</li>
+                        <li>Financial Data Management</li>
+                        <li>Integration and Distribution</li>
+                        <li>Tradebook</li>
+                    </ul>
+                </div>
+                <div className="mb-3 pb-3">
+                    <p className="">Industry Products</p>
+                    <ul>
+                        <li>Zomi Law</li>
+                        <li>Zomi Tax</li>
+                        <li>Zomi Governement</li>
+                        <li>ZomiNEF</li>
+                    </ul>
+                </div>
+            </section>
+            <section className="col">
+                <div className="mb-3 pb-3">
+                    <p className="">MEDIA</p>
+                    <ul>
+                        <li>Zomi Markets</li>
+                        <li>Zomi Technology</li>
+                        <li>Zomi Pursuits</li>
+                        <li>Zomi Politics</li>
+                        <li>Zomi Politics</li>
+                        <li>Zomi Opinion</li>
+                        <li>Zomi Businessweek</li>
+                        <li>Zomi Live Conferences</li>
+                        <li>Zomi Live Apps</li>
+                        <li>Zomi Live Radio</li>
+                        <li>Zomi Television</li>
+                        <li>News Bureaus</li>
+                        <li>ZomiNEF</li>
+                    </ul>
+                </div>
+                <div className="mb-3 pb-3">
+                    <p className="">Media Services</p>
+                    <ul>
+                        <li>Zomi Media Distribution</li>
+                        <li>Advertising</li>
+                    </ul>
+                </div>
+            </section>
+        </div> 
         );
 }
 function SectionB() {
     return (
-        <section className="row border-top pt-3">
-            <div className="col-sm-12 text-center">
-                <p>2021 Larissa Applications. Fiberabbit. All Rights Reserved</p>
+        <div className="row p-2 bg-light">
+            <div className="col text-center">
+                <p className="m-0">2021 Fiberabbit. All Rights Reserved</p>
             </div>
-        </section>
+        </div>
         );
 }

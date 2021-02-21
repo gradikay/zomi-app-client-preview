@@ -55,7 +55,7 @@ export default function Login() {
 
                 { /* Header - Start */}
                 <header className="col-sm-9 text-center border-bottom mb-3 mx-auto">
-                    <h1>Larissa</h1> 
+                    <h1>Zomi</h1> 
                     <p> Not a Member? <Link to="/register"> Signup here </Link> </p>
                 </header>
                 { /* Header - End */}
@@ -94,7 +94,7 @@ export default function Login() {
                                 className="form-control"
                                 onChange={handleFieldChange}
                                 autoComplete="current-password"
-                            />
+                            />                            
                         </div>
                         { /* Password - End */}
 
@@ -116,7 +116,7 @@ export default function Login() {
                     { /* Lower Section - Start */}
                     <section className="p-2 border-top">
                         <p className="border-bottom pb-3">
-                            <small>By signing in, you agree to Larissa's <a href="#">Terms of Service</a> and <a href="#">Privacy Notice</a>. </small>
+                            <small>By signing in, you agree to Zomi's <a href="#">Terms of Service</a> and <a href="#">Privacy Notice</a>. </small>
                         </p>
 
                         <Link to="/reset"> Forgot password? </Link>

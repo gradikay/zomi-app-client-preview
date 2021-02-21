@@ -6,35 +6,35 @@
 const dev = {
     s3: {
         REGION: "us-east-2", 
-        ATTACHEMENTS_BUCKET_NAME: "larissa-app-services-dev-attachmentsbucket-fyyb4yts28zd"
+        ATTACHEMENTS_BUCKET_NAME: "zomi-app-services-dev-attachmentsbucket-77vc1q95m2x4"
     },
     apiGateway: {
         REGION: "us-east-2",
-        SERVICE_ENDPOINT: "https://c2p83ddrt4.execute-api.us-east-2.amazonaws.com/dev"
+        SERVICE_ENDPOINT: "https://5x5ym27hbi.execute-api.us-east-2.amazonaws.com/dev"
     },
     cognito: {
         REGION: "us-east-2",
-        USER_POOL_ID: "us-east-2_OIRYrkCPn",
-        USER_POOL_CLIENT_ID: "60mqtsj4t6q2j969ubugj5g4at",
-        IDENTITY_POOL_ID: "us-east-2:cd57a59c-71d2-4cf9-870a-bcf421287e5a"
+        USER_POOL_ID: "us-east-2_greDxjNEl",
+        USER_POOL_CLIENT_ID: "6th64ltq348426krvulhd8mp99",
+        IDENTITY_POOL_ID: "us-east-2:40f2b81f-6980-4a68-86dd-fcde1128a4a8"
     }
 };
 
 // Production Configuration from AWS
 const prod = {
     s3: {
-        REGION: "us-east-2",
-        ATTACHEMENTS_BUCKET_NAME: "bozindo-shared-gateway-prod-attachmentsbucket-hsdwjkl3yiwv"
+        REGION: "...",
+        ATTACHEMENTS_BUCKET_NAME: "..."
     },
     apiGateway: {
-        REGION: "us-east-2",
-        SERVICE_ENDPOINT: "https://ct592l6az0.execute-api.us-east-2.amazonaws.com/prod"
+        REGION: "...",
+        SERVICE_ENDPOINT: "..."
     },
     cognito: {
-        REGION: "us-east-2",
-        USER_POOL_ID: "us-east-2_XQIdRwL0E",
-        USER_POOL_CLIENT_ID: "4alui28r3tmghuivhdg1lt0o7c",
-        IDENTITY_POOL_ID: "us-east-2:19742690-3392-4876-90cd-0817ff6d5ac7"
+        REGION: "...",
+        USER_POOL_ID: "...",
+        USER_POOL_CLIENT_ID: "...",
+        IDENTITY_POOL_ID: "..."
     }
 };
 

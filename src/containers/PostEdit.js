@@ -2,14 +2,10 @@
 // React required
 import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
-// uuid for Unique Ids
-// Amplify required
-import { API } from "aws-amplify";
+// uuid for Unique Ids 
 // Components
-import LoaderButton from "../components/LoaderButton";
-import { S3Image } from 'aws-amplify-react'; 
-// Libs
-import { Storage } from "aws-amplify";
+import LoaderButton from "../components/LoaderButton"; 
+import img1 from "../img/img2.jpg";
 // -------------- Application Begins Bellow ------------ //
 
 // Main Application
@@ -20,26 +16,15 @@ export default function PostEdit() {
     const [isDeleting, setIsDeleting] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     // Post Description
+    const [postTitle, setPostTitle ] = useState("");
+    const [postSection, setPostSection] = useState(""); 
     const [postStatus, setPostStatus] = useState("");
-    const [postType, setPostType ] = useState("");
-    const [postStyle, setPostStyle] = useState("");
-    const [postPrice, setPostPrice] = useState(10);
-    const [postAcreage, setPostAcreage] = useState(1);
-    const [numberOfBaths, setNumberOfBaths] = useState(1);
-    const [numberOfBedrooms, setNumberOfBedrooms] = useState(1);
-    const [postDescription, setPostDescription] = useState("");
-    // Seller Information
+    const [newsNetwork, setNewsNetwork] = useState("");
+    const [article, setArticle] = useState("");
+    // Writer
     const [userId, setUserId] = useState("");
-    const [sellerFirstName, setSellerFirstName] = useState("");
-    const [sellerLastName, setSellerLastName] = useState("");
-    const [sellerPhoneNumber, setSellerPhoneNumber] = useState(99999999);
-    // Post Location
-    const [streetAddress, setStreetAddress] = useState("");
-    const [streetAddressLine2, setStreetAddressLine2] = useState("");
-    const [streetCity, setStreetCity] = useState("");
-    const [streetState, setStreetState] = useState("");
-    const [streetCountry, setStreetCountry] = useState("");
-    const [streetZipcode, setStreetZipcode] = useState(0);
+    const [writerName, setWriterName] = useState("");
+    const [writerName2, setWriterName2] = useState(""); 
     // display the image
     const [image1, setImage1] = useState(null);
     const [image2, setImage2] = useState(null);
@@ -53,55 +38,33 @@ export default function PostEdit() {
         // Cleanup variable
         let unmounted = false;
 
-        // Loading post from Dynamodb
-        function loadPost() {
-            return API.get("posts", `/posts/${id}`);
-        }
-
         async function onLoad() {
 
             try {
 
-                if (!unmounted) {
-
-                    // Important variables
-                    const post = await loadPost();
-                    const { postStatus, postPrice, postType, postStyle, postDescription, userId, postAcreage, numberOfBaths, numberOfBedrooms } = post;
-
-                    const { firstName, lastName, phoneNumber } = post.seller;
-
-                    const { streetZipcode, streetAddress, streetAddressLine2, streetCity, streetState, streetCountry } = post.address;
-
-                    const { image1, image2, image3, image4, image5 } = post.images;
+                if (!unmounted) { 
 
                     // Important variables
                     // Post Description
-                    setPostType(postType);
-                    setPostStyle(postStyle);
-                    setPostPrice(postPrice);
-                    setPostStatus(postStatus);
-                    setPostAcreage(postAcreage);
-                    setNumberOfBaths(numberOfBaths);
-                    setNumberOfBedrooms(numberOfBedrooms);
-                    // Seller Information
-                    setUserId(userId);
-                    setSellerLastName(lastName);
-                    setSellerFirstName(firstName);
-                    setSellerPhoneNumber(phoneNumber);
-                    // Post Location
-                    setStreetCity(streetCity);
-                    setStreetState(streetState);
-                    setStreetCountry(streetCountry);
-                    setStreetAddress(streetAddress);
-                    setStreetZipcode(streetZipcode);
-                    setPostDescription(postDescription);
-                    setStreetAddressLine2(streetAddressLine2);
+                    setPostTitle("Man pleads guilty to breaking quarantine to meet up with others");
+                    setPostSection("sport");
+                    setPostStatus("current");
+                    setNewsNetwork("Newsman");
+                    setArticle(`Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Risus at ultrices mi tempus imperdiet nulla malesuada. 
+
+Ut sem nulla pharetra diam sit amet. Senectus et netus et malesuada fames ac. Nisi scelerisque eu ultrices vitae auctor. Nulla at volutpat diam ut venenatis tellus in metus vulputate. Vivamus arcu felis bibendum ut tristique et egestas. Nunc pulvinar sapien et ligula ullamcorper malesuada proin libero nunc. Sodales neque sodales ut etiam sit amet nisl. Aenean pharetra magna ac placerat vestibulum lectus mauris ultrices. Ut tortor pretium viverra suspendisse potenti nullam ac tortor. Condimentum id venenatis a condimentum vitae sapien. Volutpat ac tincidunt vitae semper quis lectus nulla at. Fermentum leo vel orci porta non pulvinar neque.
+
+`);
+                    // Writer
+                    setUserId("0000");
+                    setWriterName("Mansa" + " " + "Gradi");
+                    setWriterName2("Dodly Doo");
                     // Images
-                    setImage1(image1);
-                    setImage2(image2);
-                    setImage3(image3);
-                    setImage4(image4);
-                    setImage5(image5);
+                    setImage1(img1);
+                    setImage2(img1);
+                    setImage3(img1);
+                    setImage4(img1);
+                    setImage5(img1);
                 }
 
             } catch (e) {
@@ -123,8 +86,7 @@ export default function PostEdit() {
     // Validation and Loading
     function validateForm() {
         return (
-            postPrice > 0 &&
-            postDescription.length > 0
+            article.length > 0
         );
     }
 
@@ -137,31 +99,6 @@ export default function PostEdit() {
 
         try {
 
-            // Note: making your data lowercase will help with your perform search 
-            // on your dynamodb table -- use .toLowerCase()
-            // Dynamodb is case sensitive. Example: a user searching for "Home" in the search bar
-            // will only get results for "Home" not "HOME", "home", or any other combination
-            await updatePost({
-                // Post Description 
-                postStatus: postStatus.toLowerCase(),
-                postType: postType.toLowerCase(),
-                postStyle: postStyle.toLowerCase(),
-                postPrice: Number(postPrice),
-                postAcreage: Number(postAcreage),
-                numberOfBaths: numberOfBaths,
-                numberOfBedrooms: numberOfBedrooms,
-                postDescription: postDescription,
-                // Seller Informations 
-                sellerPhoneNumber: sellerPhoneNumber,
-                // Post Location
-                streetCity: streetCity.toLowerCase(),
-                streetState: streetState.toLowerCase(),
-                streetCountry: streetCountry.toLowerCase(),
-                streetZipcode: streetZipcode,
-                streetAddress: streetAddress.toLowerCase(),
-                streetAddressLine2: streetAddress.toLowerCase(),
-            });
-
             // Redirect us to dashboard after update is complete
             window.location.href = `/dashboard`;
 
@@ -169,18 +106,6 @@ export default function PostEdit() {
             alert(e);
             setIsLoading(false);
         }
-    }
-     
-    // Updating Post
-    function updatePost(post) {
-        return API.put("posts", `/posts/${id}`, {
-            body: post
-        });
-    }
-
-    // Deleting Post
-    function deletePost() {
-        return API.del("posts", `/posts/${id}`);
     }
 
     // Handling Delete Post
@@ -191,19 +116,16 @@ export default function PostEdit() {
             "Are you sure you want to delete this post?"
         );
 
+        // If User click "ok" on the - alert popover - continue with deleting
         if (!confirmed) {
             return;
         }
 
         setIsDeleting(true);
 
-        try {
-            await Storage.remove(image1, { level: 'protected' });
-            await Storage.remove(image2, { level: 'protected' });
-            await Storage.remove(image3, { level: 'protected' });
-            await Storage.remove(image4, { level: 'protected' });
-            await Storage.remove(image5, { level: 'protected' });
-            await deletePost();
+        try { 
+
+            // Removing from images from S3
             window.location.href = `/dashboard`;
         } catch (e) {
             alert(e);
@@ -220,67 +142,81 @@ export default function PostEdit() {
             <Header id={id}/>
             { /* Header - block & props - End */}
 
-            { /* Images - block & props - Start */}
-            <div className="container row mx-auto p-0">
-                <Images
-                    image1={image1}
-                    image2={image2}
-                    image3={image3}
-                    image4={image4}
-                    image5={image5} 
-                    userId={userId}
-                />
+            { /* Tabs - Start */}
+            <div class="container mx-auto py-3 border-bottom">
+                <ul class="nav nav-pills">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-toggle="pill" href="#post">Post</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="pill" href="#preview">Preview</a>
+                    </li>
+                </ul>
             </div>
-            { /* Images - block & props - End */}
+            { /* Tabs - End */}
 
-            { /* Post info & Post preview - block & props - Start */}
-            <div className="container row mx-auto p-0">
+            { /* Post info & Images & Preview - block & props - Start */}
+            <div class="tab-content ">
 
-                { /* Post Info - RIGHT Section - Start */}
-                <PostInfo
-                     
-                    // Important variable
-                    isLoading={isLoading}
-                    isDeleting={isDeleting}
-                    handleSubmit={handleSubmit}
-                    handleDelete={handleDelete}
-                    validateForm={validateForm}
-                    // Post Description
-                    postStatus={postStatus} setPostStatus={setPostStatus}
-                    postType={postType} setPostType={setPostType}
-                    postStyle={postStyle} setPostStyle={setPostStyle}
-                    postPrice={postPrice} setPostPrice={setPostPrice}
-                    postAcreage={postAcreage} setPostAcreage={setPostAcreage}
-                    numberOfBaths={numberOfBaths} setNumberOfBaths={setNumberOfBaths}
-                    numberOfBedrooms={numberOfBedrooms} setNumberOfBedrooms={setNumberOfBedrooms}
-                    postDescription={postDescription} setPostDescription={setPostDescription}
-                    // Seller Information 
-                    sellerFirstName={sellerFirstName}
-                    sellerLastName={sellerLastName}
-                    sellerPhoneNumber={sellerPhoneNumber} setSellerPhoneNumber={setSellerPhoneNumber}
-                    // Post Location
-                    streetAddress={streetAddress} setStreetAddress={setStreetAddress}
-                    streetAddressLine2={streetAddressLine2} setStreetAddressLine2={setStreetAddressLine2}
-                    streetCity={streetCity} setStreetCity={setStreetCity}
-                    streetState={streetState} setStreetState={setStreetState}
-                    streetCountry={streetCountry} setStreetCountry={setStreetCountry}
-                    streetZipcode={streetZipcode} setStreetZipcode={setStreetZipcode}
+                { /* Images and Post Info - Start */}
+                <div class="tab-pane container mx-auto p-0 active" id="post">
+                    <div class="row">
 
-                /> 
-                { /* Post Info - RIGHT Section - End */}
+                        { /* Images - block & props - Start */} 
+                        <Images
+                            image1={image1}
+                            image2={image2}
+                            image3={image3}
+                            image4={image4}
+                            image5={image5}
+                            userId={userId}
+                        /> 
+                        { /* Images - block & props - End */}
 
-                { /* Post Preview - LEFT Section - Start */}
-                <Preview
-                    image1={image1} 
-                    userId={userId}
-                    postType={postType}
-                    postPrice={postPrice}
-                    postStatus={postStatus}
-                />
-                { /* Post Preview - LEFT Section - End */}
+                        { /* Post Info - RIGHT Section - Start */}
+                        <PostInfo
+                            isLoading={isLoading}
+                            isDeleting={isDeleting}
+                            handleSubmit={handleSubmit}
+                            handleDelete={handleDelete}
+                            validateForm={validateForm}
+                            // Post Description
+                            postTitle={postTitle} setPostTitle={setPostTitle}
+                            postSection={postSection} setPostSection={setPostSection}
+                            postStatus={postStatus} setPostStatus={setPostStatus}
+                            newsNetwork={newsNetwork} setNewsNetwork={setNewsNetwork}
+                            article={article} setArticle={setArticle}
+                            // writer
+                            writerName={writerName}
+                            writerName2={writerName2} setWriterName2={setWriterName2}
+                        />
+                        { /* Post Info - RIGHT Section - End */}
+
+                    </div>
+                </div>
+                { /* Images and Post Info - End */}
+
+                { /* Post Preview - Start */}
+                <div class="tab-pane container fade" id="preview">
+
+                    { /* Preview - Start */}
+                    <Preview
+                        image1={image1}
+                        postTitle={postTitle}
+                        postSection={postSection}
+                        newsNetwork={newsNetwork}
+                        article={article}
+                        userId={userId}
+                        writerName={writerName}
+                        writerName2={writerName2}
+                    />
+                    { /* Preview - Start */}
+
+                </div>
+                { /* Post Preview - Start */}
 
             </div>
-            { /* Post info & Post preview - block & props - End */}
+            { /* Post info & Images & preview - block & props - End */}
 
         </main>
     );
@@ -315,58 +251,60 @@ function Images(props) {
     } = props; 
 
     return (
-        <div className="row mx-auto justify-content-center ">
+        <div className="col-sm-4">
+            <div className="row">
 
-            { /* Image1 - Start */}
-            <div className="col-sm image-container p-0"> 
+                { /* Image1 - Start */}
+                <div className="col-sm-12 image-container my-3 p-0"> 
 
-                <div className="card">
-                    <S3Image level="protected" identityId={userId} imgKey={image1} /> 
-                </div>
+                    <div className="card">
+                        <img src={img1} />
+                    </div>
                 
-            </div>
-            { /* Image1 - End */}
+                </div>
+                { /* Image1 - End */}
               
-            { /* Image2 - Start */}
-            <div className="col-sm image1-container p-0">
+                { /* Image2 - Start */}
+                <div className="col-sm-6 mb-3 p-0">
 
-                <div className="card">
-                    <S3Image level="protected" identityId={userId} imgKey={image2} />
+                    <div className="card">
+                        <img src={img1} />
+                    </div>
+
                 </div>
-
-            </div>
-            { /* Image2 - End */}
+                { /* Image2 - End */}
              
-            { /* Image3 - Start */}
-            <div className="col-sm image1-container p-0">
+                { /* Image3 - Start */}
+                <div className="col-sm-6 mb-3 p-0">
 
-                <div className="card">
-                    <S3Image level="protected" identityId={userId} imgKey={image3} />
+                    <div className="card">
+                        <img src={img1} />
+                    </div>
+
                 </div>
-
-            </div>
-            { /* Image3 - End */}
+                { /* Image3 - End */}
               
-            { /* Image4 - Start */}
-            <div className="col-sm image1-container p-0">
+                { /* Image4 - Start */}
+                <div className="col-sm-6 mb-3 p-0">
 
-                <div className="card">
-                    <S3Image level="protected" identityId={userId} imgKey={image4} />
+                    <div className="card">
+                        <img src={img1} />
+                    </div>
+
                 </div>
-
-            </div>
-            { /* Image4 - End */}
+                { /* Image4 - End */}
              
-            { /* Image5 - Start */}
-            <div className="col-sm image1-container p-0">
+                { /* Image5 - Start */}
+                <div className="col-sm-6 mb-3 p-0">
 
-                <div className="card">
-                    <S3Image level="protected" identityId={userId} imgKey={image5} />
+                    <div className="card">
+                        <img src={img1} />
+                    </div>
+
                 </div>
+                { /* Image5 - End */}
 
             </div>
-            { /* Image5 - End */}
-
         </div>
     );
 }
@@ -383,25 +321,15 @@ function PostInfo(props) {
         isDeleting,
         validateForm,
         // Post Description
+        postTitle, setPostTitle, 
+        postSection, setPostSection, 
         postStatus, setPostStatus,
-        postType, setPostType, 
-        postStyle, setPostStyle,
-        postPrice, setPostPrice,
-        postAcreage, setPostAcreage,
-        numberOfBaths, setNumberOfBaths,
-        numberOfBedrooms, setNumberOfBedrooms,
-        postDescription, setPostDescription,
-        // Seller Information 
-        sellerFirstName,
-        sellerLastName,
-        sellerPhoneNumber, setSellerPhoneNumber,
+        newsNetwork, setNewsNetwork, 
+        article, setArticle,
+        // Writer 
+        writerName,
+        writerName2, setWriterName2
         // Post Location
-        streetAddress, setStreetAddress,
-        streetAddressLine2, setStreetAddressLine2,
-        streetCity, setStreetCity,
-        streetState, setStreetState,
-        streetCountry, setStreetCountry,
-        streetZipcode, setStreetZipcode,
 
     } = props;
 
@@ -409,201 +337,81 @@ function PostInfo(props) {
     return (
         <div className="col-sm-7 mt-3">
 
-            { /* Organization, Property Address, & Property Information - Start */}
+            { /* writer, News Network & Post Information - Start */}
             <div className="row">
 
-                { /* Organization & Property Address - Start */}
+                { /* Writer & News Network - Start */}
                 <div className="col-sm-6 m-0">
-
-                    { /* Organization - Start */}
                     <div className="border p-3 mb-3 shadow-sm ">
 
                         { /* Heading */}
-                        <h3 className="mb-4">Organization</h3>
+                        <h3 className="mb-4">Publisher</h3>
 
-                        { /* Seller's Name - Start */}
+                        { /* News Network's Name - Start */}
                         <div className="form-group">
-                            <label htmlFor="publisherName" className="color-red">Seller</label>
+                            <label htmlFor="newsNetwork" className="color-red">News Network</label>
+                            <input
+                                type="text"
+                                form="form"
+                                required="required"
+                                id="newsNetwork"
+                                name="newsNetwork"
+                                className="form-control"
+                                value={newsNetwork}
+                                placeholder="news network's name"
+                                onChange={e => setNewsNetwork(e.target.value)}
+                            />
+                            { /* Helper */}
+                            <small className="text-secondary">Enter your News Network's name </small>
+
+                        </div>
+                        { /* News Network's Name - End */}
+
+                        { /* Writer - Start */}
+                        <div className="form-group">
+                            <label htmlFor="writerName" className="color-red">Writer</label>
                             <input
                                 form="form"
                                 type="text"
                                 disabled="disabled"
                                 className="form-control"
-                                value={sellerFirstName + " " + sellerLastName}
+                                value={writerName}
                             />
                             { /* Helper */}
-                            <small className="text-secondary">Your organization's name can't be changed</small>
+                            <small className="text-secondary">Your name can't be changed</small>
                         </div>
-                        { /* Seller's Name - End */}
+                        { /* Writer - End */}
 
-                        { /* Seller's Phone Number - Start */}
+                        { /* CoWriter - Start */}
                         <div className="form-group">
-                            <label htmlFor="sellerPhoneNumber" className="color-red">Phone Number</label>
+                            <label htmlFor="writerName2" className="color-red">Co-writer</label>
                             <input
-                                type="tel"
+                                type="text"
                                 form="form"
                                 required="required"
-                                id="sellerPhoneNumber"
-                                name="sellerPhoneNumber"
+                                id="writerName2"
+                                name="writerName2"
                                 className="form-control"
-                                value={sellerPhoneNumber}
-                                placeholder="phone number"
-                                onChange={e => setSellerPhoneNumber(e.target.value)}
+                                value={writerName2}
+                                placeholder="co-writer's name (optional)"
+                                onChange={e => setWriterName2(e.target.value)}
                             />
                             { /* Helper */}
-                            <small className="text-secondary">Enter your phone number</small>
+                            <small className="text-secondary">Enter your Co-writer's Name </small>
 
                         </div>
-                        { /* Seller's Phone Number - End */}
+                        { /* CoWriter - End */}
 
                     </div>
-                    { /* Organization - End */}
-
-                    { /* Property Address - Start */}
-                    <div className="border p-3 mb-3 shadow-sm ">
-
-                        { /* Heading */}
-                        <h3 className="mb-4">Property Address</h3>
-
-                        { /* Address - Start */}
-                        <div className="form-group">
-                            <label htmlFor="streetAddress" className="color-red">Street Address</label>
-                            <input
-                                form="form"
-                                type="text"
-                                id="streetAddress"
-                                required="required"
-                                name="streetAddress"
-                                value={streetAddress}
-                                placeholder="address"
-                                className="form-control"
-                                onChange={e => setStreetAddress(e.target.value)}
-                            />
-                            { /* Helper */}
-                            <small className="text-secondary">Enter your street address</small>
-
-                        </div>
-                        { /* Address - End */}
-
-                        { /* Address Line 2 - Start */}
-                        <div className="form-group">
-                            <label htmlFor="streetAddressLine2" className="color-red">Street Address Line 2</label>
-                            <input
-                                form="form"
-                                type="text"
-                                required="required"
-                                id="streetAddressLine2"
-                                name="streetAddressLine2"
-                                className="form-control"
-                                value={streetAddressLine2}
-                                placeholder="address line 2"
-                                onChange={e => setStreetAddressLine2(e.target.value)}
-                            />
-                            { /* Helper */}
-                            <small className="text-secondary">Enter your street address line 2</small>
-
-                        </div>
-                        { /* Address Line 2 - End */}
-
-                        { /* City - Start */}
-                        <div className="form-group">
-                            <label htmlFor="streetCity" className="color-red">City</label>
-                            <select
-                                from="form"
-                                id="streetCity"
-                                name="streetCity"
-                                value={streetCity}
-                                required="required"
-                                className="form-control"
-                                onChange={e => setStreetCity(e.target.value)}
-                            >
-                                <option value="">Select City</option>
-                                <option value="atlanta">Atlanta</option>
-                                <option value="lithonia">Lithonia</option>
-                                <option value="kinshasa">Kinshasa</option>
-                            </select>
-                            <small className="text-secondary">Enter your organization's city</small>
-
-                        </div>
-                        { /* City - End */}
-
-                        { /* State - Start */}
-                        <div className="form-group ">
-                            <label htmlFor="streetState" className="color-red">State</label>
-                            <select
-                                form="from"
-                                id="streetState"
-                                name="streetState"
-                                value={streetState}
-                                required="required"
-                                className="form-control"
-                                onChange={e => setStreetState(e.target.value)}
-                            >
-                                <option value="">Select State</option>
-                                <option value="georgia">GA</option>
-                                <option value="north carolina">NC</option>
-                                <option value="south carolina">SC</option>
-                            </select>
-                            <small className="text-secondary">Enter your organization's State</small>
-
-
-                        </div>
-                        { /* State - End */}
-
-                        { /* Number of bedrooms - Start */}
-                        <div className="form-group">
-                            <label htmlFor="streetZipcode" className="color-red">Zipcode / Postal</label>
-                            <input
-                                form="form"
-                                type="number"
-                                id="streetZipcode"
-                                name="streetZipcode"
-                                value={streetZipcode}
-                                className="form-control"
-                                placeholder="zipcode / postal"
-                                onChange={e => setStreetZipcode(e.target.value)}
-                            />
-                            <small className="text-secondary">Enter the number of bedrooms </small>
-                        </div>
-                        { /* Number of bedrooms - End */}
-
-                        { /* Country - Start */}
-                        <div className="form-group ">
-                            <label htmlFor="streetCountry" className="color-red">Country</label>
-                            <select
-                                form="from"
-                                id="streetCountry"
-                                required="required"
-                                name="streetCountry"
-                                value={streetCountry}
-                                className="form-control"
-                                onChange={e => setStreetCountry(e.target.value)}
-                            >
-                                <option value="">Select Country</option>
-                                <option value="usa">USA</option>
-                                <option value="congo">Congo</option>
-                                <option value="south africa">South Africa</option>
-                            </select>
-                            <small className="text-secondary">Enter your organization's Country</small>
-
-
-                        </div>
-                        { /* Country - End */}
-
-                    </div>
-                    { /* Property Address - End */}
-
                 </div>
-                { /* Organization & Property Address - End */}
+                { /* Writer & News Network - End */}
 
-                { /* Property Information - Start */}
+                { /* Post Information - Start */}
                 <div className="col-sm-6 m-0">
-
-                    { /* Property Information - Start */}
                     <div className="border p-3 mb-3 bg-white shadow-sm">
 
                         { /* Heading */}
-                        <h3 className="mb-4">Property Information</h3>
+                        <h3 className="mb-4">Post Information</h3>
 
                         { /* Status - Start */}
                         <div className="form-group">
@@ -618,156 +426,77 @@ function PostInfo(props) {
                                 onChange={e => setPostStatus(e.target.value)}
                             >
                                 <option value="">Select a Status</option>
-                                <option value="pending">Pending </option>
-                                <option value="active">Active</option>
-                                <option value="sold">Sold</option>
+                                <option value="breaking">Breaking</option>
+                                <option value="current">Current</option>
                             </select>
-                            <small className="text-secondary">Enter property Status</small>
+                            <small className="text-secondary">Enter post status</small>
 
                         </div>
                         { /* Status - End */}
 
-                        { /* Type - Start */}
+                        { /* Section - Start */}
                         <div className="form-group ">
-                            <label htmlFor="postType" className="color-red">Type</label>
+                            <label htmlFor="postSection" className="color-red">Section</label>
                             <select
                                 form="form"
-                                id="postType"
-                                name="postType"
-                                value={postType}
+                                id="postSection"
+                                name="postSection"
+                                value={postSection}
                                 required="required"
                                 className="form-control"
-                                onChange={e => setPostType(e.target.value)}
+                                onChange={e => setPostSection(e.target.value)}
                             >
-                                <option value="">Select Property Type</option>
-                                <option value="single family">Single Family</option>
-                                <option value="condo">Condo</option>
-                                <option value="apartment">Apartment</option>
-                                <option value="land">Land</option>
-                                <option value="farm">Farm</option>
+                                <option value="">Select Post Section</option>
+                                <option value="travel">Travel</option>
+                                <option value="entertainment">Entertainmnet</option>
+                                <option value="world">World</option>
+                                <option value="style">Style</option>
+                                <option value="sport">Sport</option>
                             </select>
-                            <small className="text-secondary">Enter property type</small>
+                            <small className="text-secondary">Enter post type</small>
 
                         </div>
-                        { /* Type - End */}
-
-                        { /* Style - Start */}
-                        <div className="form-group ">
-                            <label htmlFor="postStyle" className="color-red">Style</label>
-                            <select
-                                form="form"
-                                id="postStyle"
-                                name="postStyle"
-                                value={postStyle}
-                                required="required"
-                                className="form-control"
-                                onChange={e => setPostStyle(e.target.value)}
-                            >
-                                <option value="">Select Property Style</option>
-                                <option value="english">English</option>
-                                <option value="spanish">Spanish</option>
-                                <option value="french">French</option>
-                                <option value="traditional">Traditional</option>
-                            </select>
-                            <small className="text-secondary">Enter property style</small>
-
-                        </div>
-                        { /* Style - End */}
-
-                        { /* Price - Start */}
-                        <div className="form-group">
-                            <label htmlFor="postPrice" className="color-red">Price</label>
-                            <input
-                                form="form"
-                                type="number"
-                                id="postPrice"
-                                name="postPrice"
-                                value={postPrice}
-                                placeholder="price"
-                                className="form-control"
-                                onChange={e => setPostPrice(e.target.value)}
-                            />
-                            <small className="text-secondary">Enter the property price </small>
-                        </div>
-                        { /* Price - Start */}
-
-                        { /* Acreage - Start */}
-                        <div className="form-group">
-                            <label htmlFor="postAcreage" className="color-red">Acreage</label>
-                            <input
-                                form="form"
-                                type="number"
-                                id="postAcreage"
-                                name="postAcreage"
-                                value={postAcreage}
-                                placeholder="acres"
-                                className="form-control"
-                                onChange={e => setPostAcreage(e.target.value)}
-                            />
-                            <small className="text-secondary">Enter the property price </small>
-                        </div>
-                        { /* Acreage - End */}
-
-                        { /* Number of baths - Start */}
-                        <div className="form-group">
-                            <label htmlFor="numberOfBaths" className="color-red"># of Baths</label>
-                            <input
-                                form="form"
-                                type="number"
-                                id="numberOfBaths"
-                                name="numberOfBaths"
-                                value={numberOfBaths}
-                                placeholder="baths"
-                                className="form-control"
-                                onChange={e => setNumberOfBaths(e.target.value)}
-                            />
-                            <small className="text-secondary">Enter the number of bathrooms </small>
-                        </div>
-                        { /* Number of baths - End */}
-
-                        { /* Number of bedrooms - Start */}
-                        <div className="form-group">
-                            <label htmlFor="numberOfBedrooms" className="color-red"># of Bedrooms</label>
-                            <input
-                                form="form"
-                                type="number"
-                                id="numberOfBedrooms"
-                                placeholder="bedrooms"
-                                name="numberOfBedrooms"
-                                className="form-control"
-                                value={numberOfBedrooms}
-                                onChange={e => setNumberOfBedrooms(e.target.value)}
-                            />
-                            <small className="text-secondary">Enter the number of bedrooms </small>
-                        </div>
-                        { /* Number of bedrooms - End */}
-
+                        { /* Section - End */}
 
                     </div>
-                    { /* Property Information - End */}
-
                 </div>
-                { /* Property Information - End */}
+                { /* Post Information - End */}
 
             </div>
-            { /* Organization, Property Address, & Property Information - Start */}
+            { /* writer, News Network & Post Information - End */}
 
-            { /* form, Post Description, Submit Button - Start */}
+            { /* form, Title, Post Description, Submit Button - Start */}
             <div className="col-sm-12 m-0">
                 <form onSubmit={handleSubmit} id="form">
 
+                    { /* Post Title - Start */}
+                    <div className="form-group">
+                        <label htmlFor="comment" className="color-red">Title</label>
+                        <textarea
+                            rows="1"
+                            required="required"
+                            id="postTitle"
+                            name="postTitle"
+                            value={postTitle}
+                            className="form-control"
+                            onChange={e => setPostTitle(e.target.value)}
+                            placeholder="Title"
+                        ></textarea>
+                    </div>
+                    { /* Post Title - End */}
+
                     { /* Post Description - Start */}
                     <div className="form-group">
-                        <label htmlFor="comment" className="color-red">Description</label>
+                        <label htmlFor="comment" className="color-red">Article</label>
                         <textarea
-                            rows="5"
+                            rows="4"
                             required="required"
-                            id="postDescription"
-                            name="postDescription"
-                            value={postDescription}
+                            id="article"
+                            name="article"
+                            value={article}
                             className="form-control"
+                            onChange={e => setArticle(e.target.value)}
                             placeholder="Some description"
-                            onChange={e => setPostDescription(e.target.value)}
                         ></textarea>
                     </div>
                     { /* Post Description - End */}
@@ -776,7 +505,7 @@ function PostInfo(props) {
                     <LoaderButton
                         type="submit"
                         isLoading={isLoading}
-                        className="btn-primary"
+                        className="btn btn-outline-primary"
                         disabled={!validateForm()}
                     >
                         Update
@@ -787,7 +516,7 @@ function PostInfo(props) {
                     <LoaderButton
                         onClick={handleDelete}
                         isLoading={isDeleting}
-                        className="btn btn-danger ml-3"
+                        className="btn btn-outline-danger ml-3"
                     >
                         Delete
                     </LoaderButton>
@@ -795,45 +524,128 @@ function PostInfo(props) {
 
                 </form>
             </div>
-            { /* form, Post Description, Submit Button - End */}
+            { /* form, Title, Post Description, Submit Button - End */}
 
         </div>
     );
 }
 
-// Preview 
+// Preview
 function Preview(props) {
 
-    // Important variables
+    // Important variable
     const {
 
         image1,
         userId,
-        postStatus,
-        postPrice,
-        postType,
+        article,
+        postTitle,
+        writerName,
+        postSection,
+        writerName2,
+        newsNetwork,
 
     } = props;
 
+    // Dates
+    const publishednew = new Date();
+    const published = publishednew.toLocaleDateString();
+    const updatednew = new Date();
+    const updated = updatednew.toLocaleDateString();
+    // Writer
+    const lowerCaseWriterName = writerName.toLowerCase();
+
     // Return UI
     return (
-        <div className="col-sm bg-light border mt-3 py-3">
-            <article className="shadow rounded bg-white" style={{ position: "sticky", top: "0" }}>
-                <div className="card border-0">
+        <div className="col-sm border mt-3">
 
-                    { /* Image */}
-                    <S3Image level="protected" identityId={userId} imgKey={image1} /> 
+            { /* Image and Post Description - Start */}
+            <section className="row bg-light pt-3">
 
-                    { /* Body */}
-                    <div className="card-body">
-                        <span className="badge badge-primary rounded">{postStatus} - 4 HOURS AGO</span>
-                        <p className="m-0"><small>{postType}</small></p>
-                        <p><b>${postPrice}</b></p>
-                        <p className="card-text">5 bed - 2.5 bath - 9,148 sqft lot</p>
-                    </div>
+                { /* Image - Start */}
+                <div className="col-md-8">
+
+                    <img src={img1} />
 
                 </div>
+                { /* Image - End */}
+
+                { /* Body - Start */}
+                <div className="col-md-4">
+                    <ul class="list-group list-group-flush ">
+                        <li class="list-group-item px-0 bg-light pt-0">
+                            <ul class="list-group list-group-horizontal">
+                                <li class="list-group-item border-0 bg-light text-center"><b>{postTitle}</b></li>
+                            </ul>
+                        </li>
+                        <li class="list-group-item pl-0 bg-light">
+                            <ul class="list-group list-group-horizontal">
+                                <li class="list-group-item list-group-item-dark border-0 rounded pr-3" style={{ width: "110px" }}>
+                                    <small><i class="fa fa-newspaper-o"></i> Writer </small>
+                                </li>
+                                <li class="list-group-item border-0 bg-light">{newsNetwork}</li>
+                            </ul>
+                        </li>
+                        <li class="list-group-item px-0 bg-light">
+                            <ul class="list-group list-group-horizontal">
+                                <li class="list-group-item list-group-item-danger border-0 rounded pr-3" style={{
+                                    minWidth: "110px"
+                                }}>
+                                    <small><i class="fa fa-bullhorn"></i> Author(s)</small>
+                                </li>
+                                <li class="list-group-item border-0 bg-light text-capitalize">
+                                    {lowerCaseWriterName}
+                                    {writerName2 === "" ? "" : " & " + writerName2}
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="list-group-item pl-0 bg-light">
+                            <ul class="list-group list-group-horizontal">
+                                <li class="list-group-item list-group-item-secondary border-0 rounded pr-3" style={{ width: "110px" }}>
+                                    <small><i class="fa fa-calendar-check-o"></i> Published</small>
+                                </li>
+                                <li class="list-group-item border-0 bg-light"><small>{published}</small></li>
+                            </ul>
+                        </li>
+                        <li class="list-group-item pl-0 bg-light">
+                            <ul class="list-group list-group-horizontal">
+                                <li class="list-group-item list-group-item-secondary border-0 rounded pr-3" style={{ width: "110px" }}>
+                                    <small><i class="fa fa-calendar-plus-o"></i>  Updated</small>
+                                </li>
+                                <li class="list-group-item border-0 bg-light"><small>{updated}</small></li>
+                            </ul>
+                        </li>
+                        <li class="list-group-item pl-0 bg-light">
+                            <ul class="list-group list-group-horizontal">
+                                <li class="list-group-item list-group-item-dark border-0 rounded pr-3" style={{ width: "110px" }}>
+                                    <small><i class="fa fa-object-group"></i> Section</small>
+                                </li>
+                                <li class="list-group-item border-0 bg-light"><b>{postSection}</b></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                { /* Body - End */}
+
+            </section>
+            { /* Image and Post Description - End */}
+
+            { /* Article - Start */}
+            <article className="row bg-white border-top pt-3">
+
+                { /* Article */}
+                <div className="col-md-8 p-3">
+                    <pre style={{ whiteSpace: "pre-wrap" }}>{article}</pre>
+                </div>
+
+                { /* Image */}
+                <div className="col-md-4">
+                    <img src={img1} />
+                </div>
+
             </article>
+            { /* Article - End */}
+
         </div>
     );
 }

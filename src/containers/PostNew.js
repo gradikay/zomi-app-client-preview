@@ -2,15 +2,10 @@
 // React required
 import React, { useRef, useState } from "react";
 import { Link } from "react-router-dom";
-// uuid for Unique Ids 
-import uuid from "react-uuid";
-// Amplify required 
-import { API } from "aws-amplify";
+// uuid for Unique Ids  
 import config from "../config";
 // Components 
-import LoaderButton from "../components/LoaderButton";
-// Libs
-import { s3Upload } from "../libs/awsLib"; 
+import LoaderButton from "../components/LoaderButton"; 
 import { useFields } from "../libs/hooksLib";
 import { useAppContext } from "../libs/contextLib";
 // -------------- Application Begins Bellow ------------ //
@@ -22,25 +17,13 @@ export default function PostNew() {
     const { userFirstName, userLastName } = useAppContext();
     const [fields, handleFieldChange] = useFields({
         // Post Description
-        postStatus: "status",
-        postType: "",
-        postStyle: "",
-        postPrice: 1000,
-        postAcreage: 1,
-        numberOfBaths: 1,
-        numberOfBedrooms: 1,
-        postDescription: "",
-        // Seller Information
-        sellerFirstName: "",
-        sellerLastName: "",
-        sellerPhoneNumber: 9090008888,
-        // Post Location
-        streetAddress: "",
-        streetAddressLine2: "",
-        streetCity: "",
-        streetState: "",
-        streetCountry: "",
-        streetZipcode: "",
+        postTitle: "",
+        postSection: "",
+        postStatus: "",
+        newsNetwork: "",
+        article: "",
+        // writer
+        writerName2: "", 
     });
 
     // display the image
@@ -61,8 +44,7 @@ export default function PostNew() {
     const [isLoading, setIsLoading] = useState(false);
     function validateForm() {
         return (
-            fields.postPrice > 0 &&
-            fields.postDescription.length > 0
+            fields.article.length > 0
         );
     }
 
@@ -142,56 +124,8 @@ export default function PostNew() {
         setIsLoading(true);
 
         try {
-            const image1 = file1.current
-                ? await s3Upload(file1.current)
-                : null;
-            const image2 = file2.current
-                ? await s3Upload(file2.current)
-                : null;
-            const image3 = file3.current
-                ? await s3Upload(file3.current)
-                : null;
-            const image4 = file4.current
-                ? await s3Upload(file4.current)
-                : null;
-            const image5 = file5.current
-                ? await s3Upload(file5.current)
-                : null;
 
-            // Note: making your data lowercase will help with your perform search 
-            // on your dynamodb table -- use .toLowerCase()
-            // Dynamodb is case sensitive. Example: a user searching for "Home" in the search bar
-            // will only get results for "Home" not "HOME", "home", or any other combination
-            await createPost({
-                // Post Description
-                postId: uuid(),
-                postStatus: fields.postStatus.toLowerCase(),
-                postType: fields.postType.toLowerCase(),
-                postStyle: fields.postStyle.toLowerCase(),
-                postPrice: Number(fields.postPrice),
-                postAcreage: Number(fields.postAcreage),
-                numberOfBaths: fields.numberOfBaths,
-                numberOfBedrooms: fields.numberOfBedrooms,
-                postDescription: fields.postDescription,
-                // Seller Informations 
-                sellerLastName: userLastName.toLowerCase(),
-                sellerFirstName: userFirstName.toLowerCase(),
-                sellerPhoneNumber: fields.sellerPhoneNumber,
-                // Post Location
-                streetCity: fields.streetCity.toLowerCase(),
-                streetState: fields.streetState.toLowerCase(),
-                streetCountry: fields.streetCountry.toLowerCase(),
-                streetZipcode: fields.streetZipcode, 
-                streetAddress: fields.streetAddress.toLowerCase(),
-                streetAddressLine2: fields.streetAddressLine2.toLowerCase(),
-                // Images
-                image1,
-                image2,
-                image3,
-                image4,
-                image5
-            });
-             
+            // Redirect us to dashboard after data have been submitted
             window.location.href = `/dashboard`;
 
         } catch (e) {
@@ -200,86 +134,88 @@ export default function PostNew() {
         }
     }
 
-    // Creating New Post
-    function createPost(post) {
-        return API.post("posts", "/posts", {
-            body: post
-        });
-    }
-
     // Returing UI
     return ( 
         <main id="PostNew" className="container-fluid border-top border-bottom pb-5 p-0"> 
 
             { /* Header - block - Start */ }
             <Header />
-            { /* Header - block - End */ }
+            { /* Header - block - End */ } 
 
-            { /* Images - block & props - Start */ }
-            <div className="container row mx-auto p-0">
-                <Images
-                    image1={image1}
-                    image2={image2}
-                    image3={image3}
-                    image4={image4}
-                    image5={image5}
-                    handleImage1={handleImage1}
-                    handleImage2={handleImage2}
-                    handleImage3={handleImage3}
-                    handleImage4={handleImage4}
-                    handleImage5={handleImage5}
-                />
+            { /* Tabs - Start */}
+            <div class="container mx-auto py-3 border-bottom">
+                <ul class="nav nav-pills">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-toggle="pill" href="#post">Post</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="pill" href="#preview">Preview</a>
+                    </li> 
+                </ul>
             </div>
-            { /* Images - block & props - End */}
+            { /* Tabs - End */}
 
-            { /* Post info & Post preview - block & props - Start */}
-            <div className="container row mx-auto p-0">
+            { /* Post info & Images & Preview - block & props - Start */}
+            <div class="tab-content ">
+                <div class="tab-pane container mx-auto p-0 active" id="post">
+                    <div class="row">
 
-                { /* Post Info - RIGHT Section - Start */}
-                <PostInfo 
-                    isLoading={isLoading}
-                    handleSubmit={handleSubmit}
-                    validateForm={validateForm}
-                    userLastName={userLastName}
-                    userFirstName={userFirstName}
-                    handleFieldChange={handleFieldChange}
-                    // Post Description
-                    postType={fields.postType}
-                    postStyle={fields.postStyle}
-                    postPrice={fields.postPrice}
-                    postStatus={fields.postStatus}
-                    postAcreage={fields.postAcreage}
-                    numberOfBaths={fields.numberOfBaths}
-                    postDescription={fields.postDescription}
-                    numberOfBedrooms={fields.numberOfBedrooms}
-                    // Seller Information
-                    sellerLastName={fields.sellerLastName}
-                    sellerFirstName={fields.sellerFirstName}
-                    sellerPhoneNumber={fields.sellerPhoneNumber}
-                    // Post Location
-                    streetCity={fields.streetCity}
-                    streetState={fields.streetState}
-                    streetAddress={fields.streetAddress}
-                    streetCountry={fields.streetCountry}                   
-                    streetZipcode={fields.streetZipcode}                   
-                    streetAddressLine2={fields.streetAddressLine2}
-                />
-                { /* Post Info - RIGHT Section - End */}
-                 
-                { /* Post Preview - LEFT Section - Start */}
-                <Preview
-                    image1={image1}
-                    postType={fields.postType}
-                    postPrice={fields.postPrice}
-                    postStatus={fields.postStatus}
-                    postAcreage={fields.postAcreage}
-                    numberOfBaths={fields.numberOfBaths}
-                    numberOfBedrooms={fields.numberOfBedrooms}
-                />
-                { /* Post Preview - LEFT Section - Start */}
+                        { /* Images - block & props - Start */ } 
+                        <Images
+                            image1={image1}
+                            image2={image2}
+                            image3={image3}
+                            image4={image4}
+                            image5={image5}
+                            handleImage1={handleImage1}
+                            handleImage2={handleImage2}
+                            handleImage3={handleImage3}
+                            handleImage4={handleImage4}
+                            handleImage5={handleImage5}
+                        />
+                        { /* Images - block & props - End */}
 
+                        { /* Post Info - Start */}
+                        <PostInfo 
+                            isLoading={isLoading}
+                            handleSubmit={handleSubmit}
+                            validateForm={validateForm}
+                            userLastName={userLastName}
+                            userFirstName={userFirstName}
+                            handleFieldChange={handleFieldChange}
+                            // Post Description
+                            postTitle={fields.postTitle}
+                            postSection={fields.postSection}
+                            postStatus={fields.postStatus}
+                            newsNetwork={fields.newsNetwork}
+                            article={fields.article}
+                            // writer
+                            writerName={userFirstName + " " + userLastName}
+                            writerName2={fields.writerName2}
+                        />
+                        { /* Post Info - End */}
+
+                    </div>
+                </div>
+                <div class="tab-pane container fade" id="preview">
+
+                    { /* Post Preview - Start */}
+                    <Preview
+                        image1={image1}
+                        postTitle={fields.postTitle}
+                        postSection={fields.postSection} 
+                        newsNetwork={fields.newsNetwork}
+                        article={fields.article}
+                        writerName={userFirstName + " " + userLastName}
+                        writerName2={fields.writerName2}
+                    />
+                    { /* Post Preview - Start */}
+
+                </div>
             </div>
-            { /* Post info & Post preview - block & props - End */}
+            { /* Post info & Images & preview - block & props - End */}
+
+            
 
         </main> 
     );
@@ -318,147 +254,149 @@ function Images(props) {
 
     // Return UI
     return (
-        <div className="row mx-auto justify-content-center ">
+        <div className="col-sm-4">
+            <div className="row">
 
-            { /* Image1 - Start */}
-            <div className="col-sm image-container mb-3">
-                <div className="card">
+                { /* Image1 - Start */}
+                <div className="col-sm-12 image-container my-3 p-0">
+                    <div className="card">
 
-                    { /* Image upload 1 */}
-                    <img  src={image1 === null ? null : image1} className="align-self-center w-100" />
+                        { /* Image upload 1 */}
+                        <img  src={image1 === null ? null : image1} className="align-self-center" />
 
-                    { /* Body */}
-                    <div className="card-body">
-                        <div className="form-group">
-                            <label htmlFor="file1" className="color-red">Image 1</label>
+                        { /* Body */}
+                        <div className="card-body">
+                            <div className="form-group">
+                                <label htmlFor="file1" className="color-red">Image 1</label>
 
-                            { /* Input Field */}
-                            <input
-                                required="required"
-                                form="form"
-                                accept=".png, .jpg, .jpeg"
-                                type="file"
-                                name="file1"
-                                id="file1"
-                                onChange={handleImage1}
-                            />
+                                { /* Input Field */}
+                                <input
+                                    required="required"
+                                    form="form"
+                                    accept=".png, .jpg, .jpeg"
+                                    type="file"
+                                    name="file1"
+                                    id="file1"
+                                    onChange={handleImage1}
+                                />
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            { /* Image1 - End */}
+                { /* Image1 - End */}
 
-            { /* Image2 - Start */}
-            <div className="col-sm image-container mb-3">
+                { /* Image2 - Start */}
+                <div className="col-sm-6 image-container mb-3 p-0">
                  
-                <div className="card">
+                    <div className="card">
 
-                    { /* Image upload 2 */}
-                    <img src={image2 === null ? null : image2} className="align-self-center w-100" />
+                        { /* Image upload 2 */}
+                        <img src={image2 === null ? null : image2} className="align-self-center w-100" />
 
-                    { /* Body */}
-                    <div className="card-body">
-                        <div className="form-group">
-                            <label htmlFor="file2" className="color-red">Image 2</label>
-                            <input
-                                id="file2"
-                                type="file"
-                                name="file2"
-                                form="form"
-                                required="required"
-                                onChange={handleImage2}
-                                accept=".png, .jpg, .jpeg"
-                            />
+                        { /* Body */}
+                        <div className="card-body">
+                            <div className="form-group">
+                                <label htmlFor="file2" className="color-red">Image 2</label>
+                                <input
+                                    id="file2"
+                                    type="file"
+                                    name="file2"
+                                    form="form"
+                                    required="required"
+                                    onChange={handleImage2}
+                                    accept=".png, .jpg, .jpeg"
+                                />
+                            </div>
                         </div>
-                    </div>
 
-                </div>
-            </div>
-            { /* Image2 - End */}
-
-            { /* Image3 - Start */}
-            <div className="col-sm image-container mb-3">
-                { /* CARD */}
-                <div className="card">
-
-                    { /* Image upload 3 */}
-                    <img src={image3 === null ? null : image3} className="align-self-center w-100" />
-
-                    { /* Body */}
-                    <div className="card-body">
-                        <div className="form-group">
-                            <label htmlFor="file3" className="color-red">Image 3</label>
-                            <input
-                                id="file3"
-                                form="form"
-                                type="file"
-                                name="file3"
-                                required="required"
-                                onChange={handleImage3}
-                                accept=".png, .jpg, .jpeg"
-                            />
-                        </div>
                     </div>
                 </div>
-            </div>
-            { /* Image3 - End */}
+                { /* Image2 - End */}
 
-            { /* Image4 - Start */}
-            <div className="col-sm image-container mb-3">
+                { /* Image3 - Start */}
+                <div className="col-sm-6 image-container mb-3 p-0">
+                    { /* CARD */}
+                    <div className="card">
 
-                <div className="card">
+                        { /* Image upload 3 */}
+                        <img src={image3 === null ? null : image3} className="align-self-center w-100" />
 
-                    { /* Image upload 4 */}
-                    <img src={image4 === null ? null : image4} className="align-self-center w-100" />
-
-                    { /* Body */}
-                    <div className="card-body">
-                        <div className="form-group">
-                            <label htmlFor="file4" className="color-red">Image 4</label>
-                            <input
-                                id="file4"
-                                form="form"
-                                type="file"
-                                name="file4"
-                                required="required"
-                                onChange={handleImage4}
-                                accept=".png, .jpg, .jpeg"
-                            />
+                        { /* Body */}
+                        <div className="card-body">
+                            <div className="form-group">
+                                <label htmlFor="file3" className="color-red">Image 3</label>
+                                <input
+                                    id="file3"
+                                    form="form"
+                                    type="file"
+                                    name="file3"
+                                    required="required"
+                                    onChange={handleImage3}
+                                    accept=".png, .jpg, .jpeg"
+                                />
+                            </div>
                         </div>
                     </div>
-
                 </div>
-            </div>
-            { /* Image4 - End */}
+                { /* Image3 - End */}
 
-            { /* Image5 - Start */}
-            <div className="col-sm image-container mb-3"> 
+                { /* Image4 - Start */}
+                <div className="col-sm-6 image-container mb-3 p-0">
 
-                <div className="card">
+                    <div className="card">
 
-                    { /* Image upload 5 */}
-                    <img src={image5 === null ? null : image5} className="align-self-center w-100" />
+                        { /* Image upload 4 */}
+                        <img src={image4 === null ? null : image4} className="align-self-center w-100" />
 
-                    { /* Body */}
-                    <div className="card-body">
-                        <div className="form-group">
-                            <label htmlFor="file5" className="color-red">Image 5</label>
-                            <input
-                                id="file5"
-                                form="form"
-                                type="file"
-                                name="file5"
-                                required="required"
-                                onChange={handleImage5}
-                                accept=".png, .jpg, .jpeg"
-                            />
+                        { /* Body */}
+                        <div className="card-body">
+                            <div className="form-group">
+                                <label htmlFor="file4" className="color-red">Image 4</label>
+                                <input
+                                    id="file4"
+                                    form="form"
+                                    type="file"
+                                    name="file4"
+                                    required="required"
+                                    onChange={handleImage4}
+                                    accept=".png, .jpg, .jpeg"
+                                />
+                            </div>
                         </div>
+
                     </div>
-
                 </div>
-            </div>
-            { /* Image5 - End */}
+                { /* Image4 - End */}
 
+                { /* Image5 - Start */}
+                <div className="col-sm-6 image-container mb-3 p-0"> 
+
+                    <div className="card">
+
+                        { /* Image upload 5 */}
+                        <img src={image5 === null ? null : image5} className="align-self-center w-100" />
+
+                        { /* Body */}
+                        <div className="card-body">
+                            <div className="form-group">
+                                <label htmlFor="file5" className="color-red">Image 5</label>
+                                <input
+                                    id="file5"
+                                    form="form"
+                                    type="file"
+                                    name="file5"
+                                    required="required"
+                                    onChange={handleImage5}
+                                    accept=".png, .jpg, .jpeg"
+                                />
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                { /* Image5 - End */}
+
+            </div>
         </div>
         );
 }
@@ -473,27 +411,16 @@ function PostInfo(props) {
         isLoading,
         handleSubmit,
         validateForm,
-        userLastName,
-        userFirstName,
         handleFieldChange,
         // Post Description
-        postType,
-        postStyle,
-        postPrice,
+        postTitle,
+        postSection,
         postStatus,
-        postAcreage,
-        numberOfBaths,
-        numberOfBedrooms,
-        postDescription,
-        // Seller Information
-        sellerPhoneNumber,
-        // Post Location
-        streetCity,
-        streetState,
-        streetAddress,
-        streetCountry,
-        streetZipcode,
-        streetAddressLine2,
+        newsNetwork,
+        article,
+        // writer
+        writerName,
+        writerName2,
 
     } = props;
 
@@ -501,201 +428,81 @@ function PostInfo(props) {
     return ( 
         <div className="col-sm-7 mt-3">
 
-            { /* Organization, Property Address, & Property Information - Start */}
+            { /* writer, News Network & Post Information - Start */}
             <div className="row">
 
-                { /* Organization & Property Address - Start */}
-                <div className="col-sm-6 m-0">
-
-                    { /* Organization - Start */}
+                { /* Writer & News Network - Start */}
+                <div className="col-sm-6"> 
                     <div className="border p-3 mb-3 shadow-sm ">
 
                         { /* Heading */ }
-                        <h3 className="mb-4">Organization</h3>
+                        <h3 className="mb-4">Writer</h3>
 
-                        { /* Seller's Name - Start */}
+                        { /* News Network's Name - Start */}
                         <div className="form-group">
-                            <label htmlFor="publisherName" className="color-red">Seller</label>
+                            <label htmlFor="newsNetwork" className="color-red">News Network</label>
+                            <input
+                                type="text"
+                                form="form"
+                                required="required"
+                                id="newsNetwork"
+                                name="newsNetwork"
+                                className="form-control"
+                                value={newsNetwork}
+                                placeholder="news network's name"
+                                onChange={handleFieldChange}
+                            />
+                            { /* Helper */}
+                            <small className="text-secondary">Enter your News Network's name </small>
+
+                        </div>
+                        { /* News Network's Name - End */}
+
+                        { /* Writer - Start */}
+                        <div className="form-group">
+                            <label htmlFor="writerName" className="color-red">Writer</label>
                             <input
                                 form="form"
                                 type="text"
                                 disabled="disabled"
                                 className="form-control"
-                                value={userFirstName + " " + userLastName}
+                                value={writerName}
                             />
                             { /* Helper */}
-                            <small className="text-secondary">Your organization's name can't be changed</small>
+                            <small className="text-secondary">Your name can't be changed</small>
                         </div>
-                        { /* Seller's Name - End */}
+                        { /* Writer - End */}
 
-                        { /* Seller's Phone Number - Start */}
+                        { /* CoWriter - Start */}
                         <div className="form-group">
-                            <label htmlFor="sellerPhoneNumber" className="color-red">Phone Number</label>
+                            <label htmlFor="writerName2" className="color-red">Co-writer</label>
                             <input
-                                type="tel"
+                                type="text"
                                 form="form"
                                 required="required"
-                                id="sellerPhoneNumber"
-                                name="sellerPhoneNumber"
+                                id="writerName2"
+                                name="writerName2"
                                 className="form-control"
-                                value={sellerPhoneNumber}
-                                placeholder="phone number"
+                                value={writerName2}
+                                placeholder="co-writer's name (optional)"
                                 onChange={handleFieldChange}
                             />
                             { /* Helper */}
-                            <small className="text-secondary">Enter your phone number</small>
+                            <small className="text-secondary">Enter your Co-writer's Name </small>
 
                         </div>
-                        { /* Seller's Phone Number - End */}
+                        { /* CoWriter - End */}
 
                     </div>
-                    { /* Organization - End */}
-
-                    { /* Property Address - Start */}
-                    <div className="border p-3 mb-3 shadow-sm ">
-
-                        { /* Heading */ }
-                        <h3 className="mb-4">Property Address</h3> 
-
-                        { /* Address - Start */}
-                        <div className="form-group">
-                            <label htmlFor="streetAddress" className="color-red">Street Address</label>
-                            <input
-                                form="form"
-                                type="text"
-                                id="streetAddress"
-                                required="required"
-                                name="streetAddress"
-                                value={streetAddress}
-                                placeholder="address"
-                                className="form-control"
-                                onChange={handleFieldChange}
-                            />
-                            { /* Helper */}
-                            <small className="text-secondary">Enter your street address</small>
-
-                        </div>
-                        { /* Address - End */}
-
-                        { /* Address Line 2 - Start */}
-                        <div className="form-group">
-                            <label htmlFor="streetAddressLine2" className="color-red">Street Address Line 2</label>
-                            <input
-                                form="form"
-                                type="text"
-                                required="required"
-                                id="streetAddressLine2"
-                                name="streetAddressLine2"
-                                className="form-control"
-                                value={streetAddressLine2}
-                                placeholder="address line 2"
-                                onChange={handleFieldChange}
-                            />
-                            { /* Helper */}
-                            <small className="text-secondary">Enter your street address line 2</small>
-
-                        </div>
-                        { /* Address Line 2 - End */}
-
-                        { /* City - Start */}
-                        <div className="form-group">
-                            <label htmlFor="streetCity" className="color-red">City</label>
-                            <select
-                                from="form"
-                                id="streetCity"
-                                name="streetCity"
-                                value={streetCity}
-                                required="required"
-                                className="form-control"
-                                onChange={handleFieldChange}
-                            >
-                                <option value="">Select City</option>
-                                <option value="atlanta">Atlanta</option>
-                                <option value="lithonia">Lithonia</option>
-                                <option value="kinshasa">Kinshasa</option>
-                            </select>
-                            <small className="text-secondary">Enter your organization's city</small>
-
-                        </div>
-                        { /* City - End */}
-
-                        { /* State - Start */}
-                        <div className="form-group ">
-                            <label htmlFor="streetState" className="color-red">State</label>
-                            <select
-                                form="from"
-                                id="streetState"
-                                name="streetState"
-                                value={streetState}
-                                required="required"
-                                className="form-control"
-                                onChange={handleFieldChange}
-                            >
-                                <option value="">Select State</option>
-                                <option value="georgia">GA</option>
-                                <option value="north carolina">NC</option>
-                                <option value="south carolina">SC</option>
-                            </select>
-                            <small className="text-secondary">Enter your organization's State</small>
-
-
-                        </div>
-                        { /* State - End */}
-
-                        { /* Number of bedrooms - Start */}
-                        <div className="form-group">
-                            <label htmlFor="streetZipcode" className="color-red">Zipcode / Postal</label>
-                            <input
-                                form="form"
-                                type="number"
-                                id="streetZipcode"
-                                name="streetZipcode"
-                                value={streetZipcode}
-                                className="form-control"
-                                onChange={handleFieldChange}
-                                placeholder="zipcode / postal"
-                            />
-                            <small className="text-secondary">Enter the number of bedrooms </small>
-                        </div>
-                        { /* Number of bedrooms - End */} 
-
-                        { /* Country - Start */}
-                        <div className="form-group ">
-                            <label htmlFor="streetCountry" className="color-red">Country</label>
-                            <select
-                                form="from"
-                                id="streetCountry"
-                                required="required"
-                                name="streetCountry"
-                                value={streetCountry}
-                                className="form-control"
-                                onChange={handleFieldChange}
-                            >
-                                <option value="">Select Country</option>
-                                <option value="usa">USA</option>
-                                <option value="congo">Congo</option>
-                                <option value="south africa">South Africa</option>
-                            </select>
-                            <small className="text-secondary">Enter your organization's Country</small>
-
-
-                        </div>
-                        { /* Country - End */}
-
-                    </div>                   
-                    { /* Property Address - End */}
-
                 </div>
-                { /* Organization & Property Address - End */}
+                { /* Writer & News Network - End */}
 
-                { /* Property Information - Start */}
-                <div className="col-sm-6 m-0 ">
-
-                    { /* Property Information - Start */}
+                { /* Post Information - Start */}
+                <div className="col-sm-6">
                     <div className="border p-3 mb-3 bg-white shadow-sm">
 
                         { /* Heading */ }
-                        <h3 className="mb-4">Property Information</h3>
+                        <h3 className="mb-4">Post Information</h3>
 
                         { /* Status - Start */}
                         <div className="form-group">
@@ -710,153 +517,74 @@ function PostInfo(props) {
                                 onChange={handleFieldChange}
                             >
                                 <option value="">Select a Status</option>
-                                <option value="pending">Pending </option>
-                                <option value="active">Active</option>
-                                <option value="sold">Sold</option>
+                                <option value="breaking">Breaking</option>
+                                <option value="current">Current</option>
                             </select>
-                            <small className="text-secondary">Enter property Status</small>
+                            <small className="text-secondary">Enter post status</small>
 
                         </div>
                         { /* Status - End */}
 
-                        { /* Type - Start */}
+                        { /* Section - Start */}
                         <div className="form-group ">
-                            <label htmlFor="postType" className="color-red">Type</label>
+                            <label htmlFor="postSection" className="color-red">Section</label>
                             <select
                                 form="form"
-                                id="postType"
-                                name="postType"
-                                value={postType}
+                                id="postSection"
+                                name="postSection"
+                                value={postSection}
                                 required="required"
                                 className="form-control"
                                 onChange={handleFieldChange}
                             >
-                                <option value="">Select Property Type</option>
-                                <option value="single family">Single Family</option>
-                                <option value="condo">Condo</option>
-                                <option value="apartment">Apartment</option>
-                                <option value="land">Land</option>
-                                <option value="farm">Farm</option>
+                                <option value="">Select Post Section</option>
+                                <option value="travel">Travel</option>
+                                <option value="entertainment">Entertainmnet</option>
+                                <option value="world">World</option>
+                                <option value="style">Style</option>
+                                <option value="sport">Sport</option>
                             </select>
-                            <small className="text-secondary">Enter property type</small>
+                            <small className="text-secondary">Enter post type</small>
 
                         </div>
-                        { /* Type - End */}
-
-                        { /* Style - Start */}
-                        <div className="form-group ">
-                            <label htmlFor="postStyle" className="color-red">Style</label>
-                            <select
-                                form="form"
-                                id="postStyle"
-                                name="postStyle"
-                                value={postStyle}
-                                required="required"
-                                className="form-control"
-                                onChange={handleFieldChange}
-                            >
-                                <option value="">Select Property Style</option>
-                                <option value="english">English</option>
-                                <option value="spanish">Spanish</option>
-                                <option value="french">French</option>
-                                <option value="traditional">Traditional</option>
-                            </select>
-                            <small className="text-secondary">Enter property style</small>
-
-                        </div>
-                        { /* Style - End */}
-
-                        { /* Price - Start */}
-                        <div className="form-group">
-                            <label htmlFor="postPrice" className="color-red">Price</label>
-                            <input
-                                form="form"
-                                type="number"
-                                id="postPrice"
-                                name="postPrice"
-                                value={postPrice}
-                                placeholder="price"
-                                className="form-control"
-                                onChange={handleFieldChange}
-                            />                     
-                            <small className="text-secondary">Enter the property price </small> 
-                        </div>
-                        { /* Price - Start */}
-
-                        { /* Acreage - Start */}
-                        <div className="form-group">
-                            <label htmlFor="postAcreage" className="color-red">Acreage</label>
-                            <input
-                                form="form"
-                                type="number"
-                                id="postAcreage"
-                                name="postAcreage"
-                                value={postAcreage}
-                                placeholder="acres"
-                                className="form-control"
-                                onChange={handleFieldChange}
-                            />
-                            <small className="text-secondary">Enter the property price </small>
-                        </div>
-                        { /* Acreage - End */}
-
-                        { /* Number of baths - Start */}
-                        <div className="form-group">
-                            <label htmlFor="numberOfBaths" className="color-red"># of Baths</label>
-                            <input
-                                form="form"
-                                type="number"
-                                id="numberOfBaths"
-                                placeholder="baths"
-                                name="numberOfBaths"
-                                value={numberOfBaths}
-                                className="form-control"
-                                onChange={handleFieldChange}
-                            />
-                            <small className="text-secondary">Enter the number of bathrooms </small>
-                        </div>
-                        { /* Number of baths - End */}
-
-                        { /* Number of bedrooms - Start */}
-                        <div className="form-group">
-                            <label htmlFor="numberOfBedrooms" className="color-red"># of Bedrooms</label>
-                            <input
-                                form="form"
-                                type="number"
-                                id="numberOfBedrooms"
-                                placeholder="bedrooms"
-                                name="numberOfBedrooms"
-                                className="form-control"
-                                value={numberOfBedrooms}
-                                onChange={handleFieldChange}
-                            />
-                            <small className="text-secondary">Enter the number of bedrooms </small>
-                        </div>
-                        { /* Number of bedrooms - End */}                        
-
+                        { /* Section - End */}
                         
                     </div>
-                    { /* Property Information - End */}
-
                 </div>
-                { /* Property Information - End */}
+                { /* Post Information - End */}
 
             </div>
-            { /* Organization, Property Address, & Property Information - Start */}
+            { /* writer, News Network & Post Information - End */}
 
-            { /* form, Post Description, Submit Button - Start */}
-            <div className="col-sm-12 m-0">
+            { /* form, article, Title, Submit Button - Start */}
+            <div className="col-sm-12 m-0 p-0">
                 <form onSubmit={handleSubmit} id="form">
+
+                    { /* Post Title - Start */}                        
+                    <div className="form-group">
+                        <label htmlFor="comment" className="color-red">Title</label>
+                        <textarea
+                            rows="1"
+                            required="required"
+                            id="postTitle"
+                            name="postTitle"
+                            value={postTitle}
+                            className="form-control"
+                            onChange={handleFieldChange}
+                            placeholder="Title"
+                        ></textarea>
+                    </div>  
+                    { /* Post Title - End */} 
 
                     { /* Post Description - Start */}                        
                     <div className="form-group">
-                        <label htmlFor="comment" className="color-red">Description</label>
+                        <label htmlFor="comment" className="color-red">Article</label>
                         <textarea
-                            rows="5"
+                            rows="4"
                             required="required"
-                            id="postDescription"
-                            name="postDescription"
-                            value={postDescription}
+                            id="article"
+                            name="article"
+                            value={article}
                             className="form-control"
                             onChange={handleFieldChange}
                             placeholder="Some description"
@@ -868,7 +596,7 @@ function PostInfo(props) {
                     <LoaderButton
                         type="submit"
                         isLoading={isLoading}
-                        className="btn-primary"
+                        className="btn btn-outline-primary"
                         disabled={!validateForm()}
                     >
                         Publish
@@ -877,7 +605,7 @@ function PostInfo(props) {
 
                 </form>
             </div>
-            { /* form, Post Description, Submit Button - End */}
+            { /* form, article, Title, Submit Button - End */}
 
         </div> 
         );
@@ -890,40 +618,136 @@ function Preview(props) {
     const {
 
         image1, 
-        postType,
-        postPrice,
-        postStatus,
-        postAcreage,
-        numberOfBaths,
-        numberOfBedrooms,
+        article,
+        postTitle,
+        writerName, 
+        postSection,
+        writerName2,
+        newsNetwork,
 
     } = props;
+    // Dates
+    const publishednew = new Date();
+    const published = publishednew.toLocaleDateString();
+    const updatednew = new Date();
+    const updated = updatednew.toLocaleDateString();
+    // Writer
+    const lowerCaseWriterName = writerName.toLowerCase();
 
     // Return UI
     return (
-        <div className="col-sm bg-light border mt-3 py-3">
-            <article className="shadow rounded bg-white" style={{ position: "sticky", top: "0" }}>
-                <div className="card border-0">
+        <div className="col-sm border mt-3">
 
-                    { /* Image - Start */}
+            { /* Image and Post Description - Start */}
+            <section className="row bg-light pt-3">
+
+                { /* Image - Start */}
+                <div className="col-md-8">
+
                     <img
                         src={image1 === null ? null : image1}
                         style={{ minHeight: "250px" }}
                         className="w-100 bg-dark"
                     /> 
-                    { /* Image - End */}
-
-                    { /* Body - Start */}
-                    <div className="card-body">
-                        <span className="badge badge-primary rounded">{postStatus} - 4 HOURS AGO </span>
-                        <p className="m-0"><small>{postType}</small></p> 
-                        <p><b>${postPrice}</b></p>
-                        <p className="card-text">{numberOfBedrooms} bed - {numberOfBaths} bath - {postAcreage} sqft lot</p>
-                    </div>
-                    { /* Body - End */}
 
                 </div>
+                { /* Image - End */}
+
+                { /* Body - Start */}
+                <div className="col-md-4">
+                    <ul class="list-group list-group-flush ">
+
+                        { /* Title - Start */}
+                        <li class="list-group-item px-0 bg-light pt-0">
+                            <ul class="list-group list-group-horizontal">
+                                <li class="list-group-item border-0 bg-light text-center"><b>{postTitle}</b></li>
+                            </ul>
+                        </li>
+                        { /* Title - End */}
+
+                        { /* News Network - Start */}
+                        <li class="list-group-item pl-0 bg-light">
+                            <ul class="list-group list-group-horizontal">
+                                <li class="list-group-item list-group-item-dark border-0 rounded pr-3" style={{ width: "110px" }}>
+                                    <small><i class="fa fa-newspaper-o"></i> Writer </small>
+                                </li>
+                                <li class="list-group-item border-0 bg-light">{newsNetwork}</li>
+                            </ul>
+                        </li>
+                        { /* News Network - End */}
+
+                        { /* Writers - Start */}
+                        <li class="list-group-item px-0 bg-light">
+                            <ul class="list-group list-group-horizontal">
+                                <li class="list-group-item list-group-item-danger border-0 rounded pr-3" style={{
+                                    minWidth: "110px"
+                                }}>
+                                    <small><i class="fa fa-bullhorn"></i> Author(s)</small>
+                                </li>
+                                <li class="list-group-item border-0 bg-light text-capitalize">
+                                    {lowerCaseWriterName}
+                                    {writerName2 === "" ? "" : " & " + writerName2}
+                                </li>
+                            </ul>
+                        </li>
+                        { /* Writers - End */}
+
+                        { /* Published Date - Start */}
+                        <li class="list-group-item pl-0 bg-light">
+                            <ul class="list-group list-group-horizontal">
+                                <li class="list-group-item list-group-item-secondary border-0 rounded pr-3" style={{ width: "110px" }}>
+                                    <small><i class="fa fa-calendar-check-o"></i> Published</small>
+                                </li>
+                                <li class="list-group-item border-0 bg-light"><small>{published}</small></li>
+                            </ul>
+                        </li>
+                        { /* Published Date - End */}
+
+                        { /* Updated Date - Start */}
+                        <li class="list-group-item pl-0 bg-light">
+                            <ul class="list-group list-group-horizontal">
+                                <li class="list-group-item list-group-item-secondary border-0 rounded pr-3" style={{ width: "110px" }}>
+                                    <small><i class="fa fa-calendar-plus-o"></i>  Updated</small>
+                                </li>
+                                <li class="list-group-item border-0 bg-light"><small>{ updated }</small></li>
+                            </ul>
+                        </li>
+                        { /* Updated Date - End */}
+
+                        { /* Post Section - Start */}
+                        <li class="list-group-item pl-0 bg-light">
+                            <ul class="list-group list-group-horizontal">
+                                <li class="list-group-item list-group-item-dark border-0 rounded pr-3" style={{ width: "110px" }}>
+                                    <small><i class="fa fa-object-group"></i> Section</small>
+                                </li>
+                                <li class="list-group-item border-0 bg-light"><b>{postSection}</b></li>
+                            </ul>
+                        </li>
+                        { /* Post Section - End */}
+
+                    </ul>
+                </div>
+                { /* Body - End */}
+
+            </section>
+            { /* Image and Post Description - End */}
+
+            { /* Article - Start */}
+            <article className="row bg-white border-top pt-3"> 
+
+                { /* Article */}
+                <div className="col-md-8 p-3">
+                    <pre style={{ whiteSpace: "pre-wrap" }}>{article}</pre>
+                </div>
+
+                { /* Image */}
+                <div className="col-md-4">
+                    <img src={image1 === null ? null : image1} className="w-100 bg-dark" />
+                </div>
+                 
             </article>
+            { /* Article - End */}
+
         </div>
         );
 }

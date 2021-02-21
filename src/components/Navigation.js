@@ -20,6 +20,7 @@ export default function Navigation() {
     // Handling Logout
     async function handleLogout() {
 
+        // Amplify Auth.SignOut
         await Auth.signOut();
 
         userHasAuthenticated(false);
@@ -29,6 +30,8 @@ export default function Navigation() {
     }
 
     // Handling search
+    // - To add the search field, just call the block: 
+    //   <Search handleSearch={handleSearch} setSearch={setSearch} search={search} />
     async function handleSearch(event) {
 
         event.preventDefault();
@@ -43,48 +46,58 @@ export default function Navigation() {
         }
     }
 
-
     // Return UI
     return (
-        <nav id="Navigation" className="navbar navbar-expand-lg bg-white shadow-sm">
+        <>
+            {/* Nav - Start */ }
+            <nav id="Navigation" className="navbar navbar-expand-lg bg-white shadow-sm">
 
-            { /* Brand - Start */}
-            <Link className="navbar-brand p-0" to="/">Larissa</Link>
-            { /* Brand - End */}
+                { /* Brand - Start */}
+                <Link className="navbar-brand p-0" to="/">Zomi</Link>
+                { /* Brand - End */}
 
-            { /* Toggler/collapsibe Button - Start */}
-            <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
-                <i className='fa fa-server' role="img" aria-label="menu"></i>
-            </button>
-            { /* Toggler/collapsibe Button - End */}
+                { /* Toggler/collapsibe Button - Start */}
+                <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+                    <i className='fa fa-server' role="img" aria-label="menu"></i>
+                </button>
+                { /* Toggler/collapsibe Button - End */}
              
-            <div className="collapse navbar-collapse justify-content-end" id="collapsibleNavbar">
-                <ul className="navbar-nav">
+                { /* Center Navigation - Start */}
+                <div className="collapse navbar-collapse justify-content-end" id="collapsibleNavbar">
+                    <ul className="navbar-nav">
                     
-                    { /* Other Links - Start */}
-                    <AppliedLinks/>
-                    { /* Other Links - End */}
+                        { /* Other Links - Start */}
+                        <AppliedLinks/>
+                        { /* Other Links - End */}                        
 
-                    { /* Return Tabs whenever the user is Logged In or Logged Out - Start */}
-                    {isAuthenticated ? (
+                        { /* Search - Start */}
+                        <Search handleSearch={handleSearch} setSearch={setSearch} search={search} />
+                        { /* Search - End */}
+
+                    </ul>
+                </div>
+                { /* Center Navigation - End */}
+
+                { /* Right Navigation - Start */}
+                <div className="collapse navbar-collapse justify-content-end" id="collapsibleNavbar">
+                    <ul className="navbar-nav"> 
+
                         <AuthenticatedLinks handleLogout={handleLogout} />
-                    ) : ( 
-                        <UnauthenticatedLinks/> 
-                    )}
-                    { /* Return Tabs whenever the user is Logged In or Logged Out - Start */}
+                        <UnauthenticatedLinks />
 
-                    { /* Search - Start */}
-                    <Search handleSearch={handleSearch} setSearch={setSearch} search={search} />
-                    { /* Search - End */}
+                    </ul>
+                </div>
+                { /* Right Navigation - End */}
 
-                </ul>
-            </div>
-
-        </nav>
+            </nav>
+            {/* Nav - End */ }
+        </>
         );
 }
 
 // Search input
+// - To add the search field, just call the block: 
+//   <Search handleSearch={handleSearch} setSearch={setSearch} search={search} />
 function Search(props) {
 
     // Important variables
@@ -130,79 +143,27 @@ function Search(props) {
 function AppliedLinks() {
     return (
         <> 
-            { /* Condo - Start */}
             <li className="nav-item">
-                <Link className="nav-link" to="/filter/condo">
-                    Condo
-                </Link>
+                <Link className="nav-link" to={`/filter/us`}>US</Link>
             </li>
-            { /* Condo - End */}
-
-            { /* Land - Start */}
             <li className="nav-item">
-                <Link className="nav-link" to="/filter/land">
-                    Land
-                </Link>
+                <Link className="nav-link" to={`/filter/world`}>World</Link>
             </li>
-            { /* Land - End */}
-
-            { /* Sell - Start */}
             <li className="nav-item">
-                <Link className="nav-link" to="/sell">
-                    Sell
-                </Link>
+                <Link className="nav-link" to={`/filter/politics`}>Politics</Link>
+            </li>
+            <li className="nav-item">
+                <Link className="nav-link" to={`/filter/business`}>Business</Link>
             </li> 
-            { /* Sell - End */}
-             
-            { /* Buy - Start */}
-            <li className="nav-item dropdown">
-
-                { /* Button */ }
-                <a className="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
-                    Buy
-                </a>
-
-                { /* Links */ }
-                <ul className="dropdown-menu px-3">
-
-                    <li className="nav-item">
-                        <Link className="nav-link" to="#nowhere">
-                            + Home for Sale
-                        </Link>
-                    </li>
-                    <li className="nav-item">
-                        <Link className="nav-link" to="/filter/new">
-                            + New Constructions
-                        </Link>
-                    </li>
-                    <li className="nav-item">
-                        <Link className="nav-link" to="/filter/senior">
-                            + Senior Homes
-                        </Link>
-                    </li>
-                    <div className="dropdown-header">Homes Values</div>
-
-                    <li className="nav-item">
-                        <Link className="nav-link" to="#nowhere">
-                            + Housing Market
-                        </Link>
-                    </li>
-                    <li className="nav-item">
-                        <Link className="nav-link" to="#nowhere">
-                            + Property Records
-                        </Link>
-                    </li> 
-                </ul>
-            </li>
-            { /* Buy - End */}
-
-            { /* News and Insight - Start */}
             <li className="nav-item">
-                <Link className="nav-link" to="#nowhere">
-                    News & Insight
-                </Link>
-            </li>  
-            { /* News and Insight - End */}
+                <Link className="nav-link" to={`/filter/style`}>Style</Link>
+            </li>
+            <li className="nav-item">
+                <Link className="nav-link" to={`/filter/travel`}>Travel</Link>
+            </li>
+            <li className="nav-item">
+                <Link className="nav-link" to={`/filter/sports`}>Sports</Link>
+            </li> 
         </>
         );
 }
@@ -225,12 +186,12 @@ function AuthenticatedLinks({ handleLogout }) {
 
                     <li className="nav-item">
                         <Link className="nav-link" to="/postnew">
-                            + Add Properties
+                            + Add Post
                         </Link>
                     </li>
                     <li className="nav-item">
                         <Link className="nav-link" to="/dashboard">
-                            <i className="fa fa-ban fa-spin"></i> Dashboard
+                            <i className="fa fa-ban fa-spin"></i> Breakroom
                         </Link>
                     </li>  
 
@@ -265,7 +226,8 @@ function UnauthenticatedLinks() {
             { /* Sign In - Start */}
             <li className="nav-item">
                 <Link className="nav-link" to="/login">
-                    Login
+                    <i className="fa fa-sign-in" role="img" aria-label="sign-in"></i>
+                    <span> Login </span>
                 </Link>
             </li>
             { /* Sign In - End */}
